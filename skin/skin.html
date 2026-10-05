@@ -1,0 +1,3962 @@
+<!DOCTYPE html>
+<html lang="ko" id="top">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#101013" media="(prefers-color-scheme: dark)">
+  <title>[##_page_title_##] — [##_title_##]</title>
+  <link rel="alternate" type="application/rss+xml" title="[##_title_##]" href="[##_rss_url_##]">
+
+  <!-- ═══ 파비콘 ═══════════════════════════════════════════════════════════
+       스킨 옵션 '파비콘' 에 이미지 주소를 적으면 여기에 들어갑니다.
+       비워 두면 관리 → 블로그 에서 올린 파비콘(/favicon.ico)을 그대로 씁니다.
+       SVG 를 data URI 로 넣어도 됩니다 — 그때 # 은 %23 으로 적어야 합니다. -->
+  <s_if_var_favicon>
+  <link rel="icon" href="[##_var_favicon_##]">
+  </s_if_var_favicon>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       L U C I D — Liquid Glass skin for Tistory
+       의존성 없음. Tailwind / Alpine / jQuery 를 쓰지 않습니다.
+       ═══════════════════════════════════════════════════════════════════ -->
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+
+  <!-- 코드 하이라이팅 테마 — style.css 보다 먼저 두어야 우리 규칙이 이깁니다.
+       스킨 설정의 '코드 하이라이팅' 값을 그대로 씁니다. -->
+  <link rel="stylesheet" id="hl-light" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/[##_var_hljs_##].min.css">
+  <link rel="stylesheet" id="hl-dark" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/[##_var_hljs-dark_##].min.css" disabled>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- 스킨 설정값 → CSS 변수 -->
+  <style>
+    :root { --measure: [##_var_width_##]px; }
+  </style>
+
+  <!--
+    첫 페인트 전에 테마와 유리 투명도를 확정합니다.
+    이 스크립트만 동기 실행이고, 나머지는 전부 defer 입니다.
+  -->
+  <script>
+    (function () {
+      var d = document.documentElement;
+
+      /* 저장소가 막힌 환경(사생활 보호 모드 등)에서는 읽기만 해도 던집니다 */
+      function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+      /* 테마 — 저장값이 없으면 시스템 설정을 따릅니다 */
+      var t = get('lucid-theme');
+      if (t !== 'light' && t !== 'dark') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      d.classList.toggle('dark', t === 'dark');
+
+      /* 유리 투명도 — 0 = 선명하게(ultraclear), 1 = 불투명하게(fully tinted) */
+      var c = parseFloat(get('lucid-clarity'));
+      if (!(c >= 0 && c <= 1)) c = 0.5;
+      d.style.setProperty('--clarity', String(c));
+
+      window.LUCID = { theme: t, clarity: c };
+    })();
+  </script>
+</head>
+
+<body id="[##_body_id_##]">
+
+<script>
+  /* 홈인지 여기서 정합니다.
+     티스토리가 body id 로 페이지 종류를 알려주므로 경로를 짐작할 필요가
+     없습니다(/page/2 같은 것도 알아서 index 입니다). 마크업이 파싱되기
+     전에 결정돼야 홈 히어로가 다른 페이지에서 한 번 깜빡였다 사라지는
+     일이 없습니다. */
+  (function () {
+    var id = document.body.id || '';
+    if (id === 'tt-body-index' || location.pathname === '/') {
+      document.documentElement.classList.add('is-home');
+    }
+  })();
+</script>
+
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot__glass">
+    <span class="boot__emoji">🧑‍💻</span>
+    <span class="boot__dots"><i></i><i></i><i></i></span>
+  </div>
+</div>
+
+<!-- 아이콘 스프라이트 — 외부 아이콘 폰트를 쓰지 않습니다 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="i-menu" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 6h14M3 11h14M3 16h14"/></g>
+    <g id="i-search" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 17 17"/></g>
+    <g id="i-sun" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.5v2M10 16.5v2M18.5 10h-2M3.5 10h-2M16 4l-1.4 1.4M5.4 14.6 4 16M16 16l-1.4-1.4M5.4 5.4 4 4"/></g>
+    <g id="i-moon" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3z"/></g>
+    <g id="i-contrast" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="7.2"/><path d="M10 2.8v14.4a7.2 7.2 0 0 0 0-14.4z" fill="currentColor" stroke="none"/></g>
+    <g id="i-up" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5-5 5 5"/></g>
+    <g id="i-right" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 5 5 5-5 5"/></g>
+    <g id="i-left" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 5-5 5 5 5"/></g>
+    <g id="i-list" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6h11M6 10h11M6 14h7M3 6h.01M3 10h.01M3 14h.01"/></g>
+    <g id="i-copy" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="7" y="7" width="9" height="9" rx="2"/><path d="M13 4.5H6A1.5 1.5 0 0 0 4.5 6v7"/></g>
+    <g id="i-check" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10.5 4 4 8-9"/></g>
+    <g id="i-lock" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="9" width="12" height="8" rx="2.2"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></g>
+    <g id="i-star" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="m10 3 2.2 4.5 5 .7-3.6 3.5.85 5L10 14.3 5.55 16.7l.85-5L2.8 8.2l5-.7z"/></g>
+    <g id="i-chevron" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 5 5 5-5"/></g>
+    <g id="i-close" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m5 5 10 10M15 5 5 15"/></g>
+    <g id="i-sliders" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 5.5h4M11 5.5h6M3 10h9M16 10h1M3 14.5h2M9 14.5h8"/><circle cx="9" cy="5.5" r="1.9" fill="currentColor" stroke="none"/><circle cx="14" cy="10" r="1.9" fill="currentColor" stroke="none"/><circle cx="7" cy="14.5" r="1.9" fill="currentColor" stroke="none"/></g>
+    <g id="i-quote" fill="currentColor"><path d="M8.2 4.6c-2.9 1-4.6 3.3-4.6 6.2 0 2.6 1.5 4.3 3.5 4.3 1.7 0 3-1.2 3-2.9 0-1.6-1.1-2.8-2.6-2.8-.3 0-.6 0-.9.1.3-1.4 1.4-2.5 3-3.1l-1.4-1.8zm8 0c-2.9 1-4.6 3.3-4.6 6.2 0 2.6 1.5 4.3 3.5 4.3 1.7 0 3-1.2 3-2.9 0-1.6-1.1-2.8-2.6-2.8-.3 0-.6 0-.9.1.3-1.4 1.4-2.5 3-3.1l-1.4-1.8z"/></g>
+    <g id="i-tag" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3 8.6V4a1 1 0 0 1 1-1h4.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-4.6 4.6a1 1 0 0 1-1.4 0L3.3 9.3a1 1 0 0 1-.3-.7z"/><circle cx="6.6" cy="6.6" r="1"/></g>
+    <g id="i-bell" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5.5 8a4.5 4.5 0 0 1 9 0c0 3.5 1.5 4.5 1.5 4.5H4S5.5 11.5 5.5 8z"/><path d="M8.3 15a1.9 1.9 0 0 0 3.4 0"/></g>
+    <g id="i-comment" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M17 9.7c0 3.3-3.1 6-7 6a8 8 0 0 1-2-.25L4 17l.9-2.9A5.75 5.75 0 0 1 3 9.7c0-3.3 3.1-6 7-6s7 2.7 7 6z"/></g>
+    <!-- macOS 창 컨트롤 (12px 신호등 안에 들어갑니다) -->
+    <g id="i-mac-close" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l4 4M7 3L3 7"/></g>
+    <g id="i-mac-min" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2.6 5h4.8"/></g>
+    <g id="i-mac-expand" fill="currentColor"><path d="M2 2h3.1L2 5.1z"/><path d="M8 8H4.9L8 4.9z"/></g>
+    <g id="i-mac-collapse" fill="currentColor"><path d="M5.2 1.4v3.1H2.1z"/><path d="M4.8 8.6V5.5h3.1z"/></g>
+    <g id="i-send" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M17 3 9 11M17 3l-5.5 14-2.5-6L3 8.5z"/></g>
+  </defs>
+</svg>
+
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="progress"></div></div>
+
+<s_t3>
+<div class="shell <s_if_var_sidebar>shell--sidebar</s_if_var_sidebar>" id="shell" data-hide-menubar="[##_var_hide-menubar_##]">
+
+  <!-- ═══ 상단 내비게이션 ═════════════════════════════════════════════════
+       왼쪽에 사이드바 손잡이, 그 옆에 카테고리, 정중앙에 블로그 이름,
+       오른쪽에 Page 와 검색. 맨 위에서는 배경 위에 글자만 얹혀 있다가
+       스크롤하면 떠 있는 유리 알약으로 바뀝니다. (CSS §25)          -->
+  <header class="topbar glass" id="topbar">
+
+    <!-- 왼쪽 끝: 사이드바 손잡이.
+         넓은 화면에서는 사이드바가 이미 열려 있으므로, 누르면 사이드바를
+         뺀 나머지가 어두워집니다 — 여는 게 아니라 '거기를 보라' 는 신호입니다.
+         좁아져서 사이드바가 서랍으로 바뀌면 같은 버튼이 여는 버튼이 됩니다. -->
+    <button class="iconbtn" type="button" id="menu-btn" aria-controls="sidebar" aria-expanded="false">
+      <span class="sr">사이드바</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-menu"/></svg>
+    </button>
+
+    <!-- 카테고리 트리거 — JS 가 사이드바 카테고리를 읽어 채웁니다 -->
+    <nav class="topbar__nav" id="topnav" aria-label="카테고리"></nav>
+
+    <!-- 정중앙: 블로그 이름. 두 상태에서 자리가 바뀌지 않습니다 -->
+    <a class="topbar__brand" href="[##_blog_link_##]">
+      <span class="topbar__name truncate">[##_title_##]</span>
+    </a>
+
+    <!-- 오른쪽: 홈·태그·방명록·공지사항·깃허브를 Page 하나로 묶습니다 -->
+    <nav class="topbar__pages" id="toppages" aria-label="블로그 메뉴">
+      <button class="navitem" type="button" id="pages-btn" aria-expanded="false" aria-controls="pagemenu">
+        <span>Page</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </button>
+      <div class="dropdown glass glass--thick" id="pagemenu">
+        <div class="topbar__menusrc" hidden>[##_blog_menu_##]</div>
+      </div>
+    </nav>
+
+    <div class="topbar__actions">
+      <button class="iconbtn btn_subscription" type="button" id="subscribe-btn" hidden>
+        <span class="sr">구독하기</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-star"/></svg>
+      </button>
+
+      <button class="iconbtn" type="button" id="search-btn" aria-controls="searchpop" aria-expanded="false">
+        <span class="sr">검색</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-search"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ 검색 팝업 ═══════════════════════════════════════════════════════
+       상단바에서 필드를 늘리면, 검색하는 동안에도 화면은 여전히 글을 읽는
+       화면입니다. 손은 검색에 가 있는데 눈이 갈 곳은 마련돼 있지 않습니다.
+       그래서 화면을 덮고, 빈 입력창 아래에 태그를 깔아둡니다 —
+       무엇을 칠지 정하지 않은 사람에게 먼저 보여줄 것이 있어야 합니다.  -->
+  <div class="searchpop" id="searchpop" role="dialog" aria-modal="true" aria-label="검색">
+    <div class="searchpop__panel glass glass--thick">
+      <s_search>
+        <div class="searchpop__bar">
+          <svg class="searchpop__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="search" type="search" autocomplete="off"
+                 placeholder="찾아보고자 하는 글을 검색해 보세요"
+                 name="[##_search_name_##]" value="[##_search_text_##]"
+                 onkeypress="if (event.keyCode == 13) { [##_search_onclick_submit_##] }">
+          <button class="searchpop__cancel" type="button" id="search-cancel">Cancel</button>
+        </div>
+      </s_search>
+
+      <div class="searchpop__body">
+        <a class="searchpop__more" href="/tag">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-tag"/></svg>
+          <span>태그 클라우드로 이동</span>
+          <em>→</em>
+        </a>
+        <div class="searchpop__tags" id="searchpop-tags"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 카테고리 메가 패널 — 상단바 바로 아래에 붙습니다 -->
+  <div class="mega" id="mega">
+    <div class="mega__panel glass glass--thick" id="mega-panel"></div>
+  </div>
+
+  <!-- ═══ 사이드바 ════════════════════════════════════════════════════════ -->
+  <div class="scrim" id="scrim" hidden></div>
+
+  <aside class="sidebar glass" id="sidebar" aria-label="블로그 메뉴">
+    <div class="sidebar__scroll">
+      <s_sidebar>
+
+        <s_sidebar_element>
+          <!-- 프로필 -->
+          <div class="sidebar__block">
+            <div class="profile">
+              <img class="profile__img" src="[##_image_##]" width="72" height="72" alt="">
+              <a class="profile__name" href="[##_blog_link_##]">[##_title_##]</a>
+              <p class="profile__desc">[##_desc_##]</p>
+            </div>
+          </div>
+        </s_sidebar_element>
+
+
+        <s_sidebar_element>
+          <!-- ═══ 방문 지표 ═══════════════════════════════════════════════
+               전체·오늘·어제 세 숫자를 나란히 놓으면 크기만 다른 세 개가
+               같은 무게로 서 있습니다. 어느 게 중요한지, 오늘이 좋은 날인지
+               아무것도 말해주지 않습니다.
+
+               오늘 하나를 크게 세우고 나머지는 그 숫자를 읽는 데 필요한
+               맥락으로 씁니다. 막대는 어제를 100 으로 놓았을 때 오늘의
+               위치입니다 — 숫자 둘을 눈으로 나누지 않아도 됩니다.
+
+               아래 세 칸은 셋이 한 문장이 되도록 골랐습니다.
+               "글 N편이 M번 읽혔고, 한 편당 M/N번."
+               앞의 둘은 규모만 말하고, 셋째가 있어야 그 규모가
+               무엇을 뜻하는지가 나옵니다.
+
+               ※ 구독자 수는 넣지 못합니다. 스킨 치환자에도 없고,
+                 T.config.SUBSCRIPTION 은 "내가 이 블로그를 구독했는가"
+                 만 담고 있으며, 공개 API 도 막혀 있습니다(같은 도메인
+                 404, 다른 도메인 CORS). 손으로 적어 두는 숫자는
+                 언젠가 반드시 틀립니다.                           -->
+          <div class="sidebar__block">
+            <div class="stats pane" id="stats" data-subscribers="[##_var_subscribers_##]">
+              <div class="stats__head">
+                <span class="stats__label">오늘 방문</span>
+                <span class="stats__delta" id="stats-delta"></span>
+              </div>
+
+              <div class="stats__big" id="stats-today">[##_count_today_##]</div>
+
+              <div class="stats__bar" aria-hidden="true"><i id="stats-fill"></i></div>
+              <p class="stats__vs">어제 <b id="stats-yest">[##_count_yesterday_##]</b></p>
+
+              <div class="stats__grid" id="stats-grid">
+                <div><b id="stats-total">[##_count_total_##]</b><span>방문자</span></div>
+                <div><b id="stats-posts">–</b><span>글</span></div>
+                <div id="stats-avg-cell"><b id="stats-avg">–</b><span>구독자</span></div>
+              </div>
+            </div>
+          </div>
+        </s_sidebar_element>
+
+        <s_sidebar_element>
+          <!-- 카테고리 -->
+          <div class="sidebar__block">
+            <h2 class="sidebar__label">카테고리</h2>
+            <nav class="category" id="category" data-foldable="[##_var_foldable-category_##]">[##_category_list_##]</nav>
+          </div>
+        </s_sidebar_element>
+
+        <s_sidebar_element>
+          <!-- 블로그 메뉴 -->
+          <div class="sidebar__block">
+            <h2 class="sidebar__label">메뉴</h2>
+            <nav class="category">[##_blog_menu_##]</nav>
+          </div>
+        </s_sidebar_element>
+
+        <s_sidebar_element>
+          <!-- 공지사항 -->
+          <div class="sidebar__block">
+            <h2 class="sidebar__label"><a href="/notice">공지사항</a></h2>
+            <s_rct_notice>
+              <ul class="slist">
+                <s_rct_notice_rep>
+                  <li class="slist__item">
+                    <a href="[##_notice_rep_link_##]">
+                      <svg viewBox="0 0 20 20" width="14" height="14" style="flex:none;margin-top:.2rem;opacity:.5" aria-hidden="true"><use href="#i-bell"/></svg>
+                      <span class="slist__body slist__title clamp-2">[##_notice_rep_title_##]</span>
+                    </a>
+                  </li>
+                </s_rct_notice_rep>
+              </ul>
+            </s_rct_notice>
+          </div>
+        </s_sidebar_element>
+
+        <s_sidebar_element>
+          <!-- 인기 글 -->
+          <div class="sidebar__block" data-section="popular">
+            <h2 class="sidebar__label">인기 글</h2>
+            <ul class="slist">
+              <s_rctps_popular_rep>
+                <li class="slist__item">
+                  <a href="[##_rctps_rep_link_##]">
+                    <s_rctps_rep_thumbnail><img class="slist__thumb" src="[##_rctps_rep_thumbnail_##]" width="44" height="44" alt="" loading="lazy"></s_rctps_rep_thumbnail>
+                    <span class="slist__body">
+                      <span class="slist__title clamp-2">[##_rctps_rep_title_##]</span>
+                      <span class="slist__meta">[##_rctps_rep_simple_date_##]</span>
+                    </span>
+                  </a>
+                </li>
+              </s_rctps_popular_rep>
+            </ul>
+          </div>
+        </s_sidebar_element>
+
+        <s_sidebar_element>
+          <!-- 최근 글 -->
+          <div class="sidebar__block">
+            <h2 class="sidebar__label">최근 글</h2>
+            <ul class="slist">
+              <s_rctps_rep>
+                <li class="slist__item">
+                  <a href="[##_rctps_rep_link_##]">
+                    <s_rctps_rep_thumbnail><img class="slist__thumb" src="[##_rctps_rep_thumbnail_##]" width="44" height="44" alt="" loading="lazy"></s_rctps_rep_thumbnail>
+                    <span class="slist__body">
+                      <span class="slist__title clamp-2">[##_rctps_rep_title_##]</span>
+                      <span class="slist__meta">[##_rctps_rep_simple_date_##]</span>
+                    </span>
+                  </a>
+                </li>
+              </s_rctps_rep>
+            </ul>
+          </div>
+        </s_sidebar_element>
+
+        <s_sidebar_element>
+          <!-- 최근 댓글 -->
+          <div class="sidebar__block" data-section="comments">
+            <h2 class="sidebar__label">최근 댓글</h2>
+            <ul class="slist">
+              <s_rctrp_rep>
+                <li class="slist__item">
+                  <a href="[##_rctrp_rep_link_##]">
+                    <svg viewBox="0 0 20 20" width="14" height="14" style="flex:none;margin-top:.2rem;opacity:.5" aria-hidden="true"><use href="#i-comment"/></svg>
+                    <span class="slist__body">
+                      <span class="slist__title clamp-2">[##_rctrp_rep_desc_##]</span>
+                      <span class="slist__meta">[##_rctrp_rep_name_##] · [##_rctrp_rep_time_##]</span>
+                    </span>
+                  </a>
+                </li>
+              </s_rctrp_rep>
+            </ul>
+          </div>
+        </s_sidebar_element>
+
+        <s_sidebar_element>
+          <!-- 태그 -->
+          <div class="sidebar__block">
+            <h2 class="sidebar__label"><a href="/tag">태그</a></h2>
+            <div class="taglist">
+              <s_random_tags>
+                <a class="chip pane [##_tag_class_##]" href="[##_tag_link_##]">[##_tag_name_##]</a>
+              </s_random_tags>
+            </div>
+          </div>
+        </s_sidebar_element>
+
+      </s_sidebar>
+    </div>
+  </aside>
+
+  <!-- ═══ 본문 ════════════════════════════════════════════════════════════ -->
+  <main class="main" id="main">
+
+    <!-- ═══ 홈 히어로 ═════════════════════════════════════════════════════
+         홈에서만 나타납니다(:root.is-home). 화면을 통째로 쓰는 이유는,
+         첫 화면이 "무슨 글이 몇 개 있는 곳" 이 아니라 "누가 왜 쓰는 곳"
+         인지를 먼저 말해야 하기 때문입니다. 목록은 한 번 스크롤하면
+         바로 나옵니다.
+
+         배경은 따로 깔지 않습니다. 이미 body::before 에 보라 은하수가
+         있고, 홈에서는 그걸 더 진하게 틀어 올립니다(§34). 이미지가
+         아니라 그라디언트라 용량이 0 이고, 유리 굴절도 살아납니다.   -->
+    <section class="hhero" id="hhero">
+      <div class="hhero__inner">
+        <p class="hhero__badge" id="hhero-badge">[##_var_hero-badge_##]</p>
+
+        <h2 class="hhero__title">
+          <span class="hhero__l1" id="hhero-l1">[##_var_hero-title_##]</span>
+          <span class="hhero__l2">
+            <em class="hhero__type" id="hhero-type" data-words="[##_var_hero-words_##]"></em><i class="hhero__caret" aria-hidden="true"></i>
+          </span>
+        </h2>
+
+        <div class="hhero__sep" aria-hidden="true">
+          <span></span>
+          <svg viewBox="0 0 20 20"><use href="#i-quote"/></svg>
+          <span></span>
+        </div>
+
+        <p class="hhero__sub" id="hhero-sub">[##_var_hero-sub_##]</p>
+
+        <a class="hhero__down glass" href="#home-body">
+          <span class="sr">아래로</span>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-chevron"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <span id="home-body"></span>
+
+    <!-- ── 커버 (홈 화면) ─────────────────────────────────────────────── -->
+    <s_cover_group>
+      <s_cover_rep>
+
+        <s_cover name="list">
+          <section class="cover wrap" data-view="list">
+            <h2 class="cover__title">[##_cover_title_##]</h2>
+            <div class="postlist">
+              <s_cover_item>
+                <article class="post pane reveal">
+                  <a class="post__link" href="[##_cover_item_url_##]"><span class="sr">[##_cover_item_title_##]</span></a>
+                  <s_cover_item_thumbnail>
+                    <div class="post__thumb"><img src="[##_cover_item_thumbnail_##]" alt="" loading="lazy"></div>
+                  </s_cover_item_thumbnail>
+                  <div class="post__body">
+                    <h3 class="post__title clamp-2">[##_cover_item_title_##]</h3>
+                    <s_cover_item_article_info>
+                      <p class="post__summary clamp-2">[##_cover_item_summary_##]</p>
+                      <div class="post__meta">
+                        <time>[##_cover_item_simple_date_##]</time>
+                        <a href="[##_cover_item_category_url_##]">[##_cover_item_category_##]</a>
+                      </div>
+                    </s_cover_item_article_info>
+                    <s_cover_item_not_article_info>
+                      <p class="post__summary clamp-2">[##_cover_item_summary_##]</p>
+                    </s_cover_item_not_article_info>
+                  </div>
+                </article>
+              </s_cover_item>
+            </div>
+          </section>
+        </s_cover>
+
+        <s_cover name="grid">
+          <section class="cover wrap wrap--wide" data-view="grid">
+            <h2 class="cover__title">[##_cover_title_##]</h2>
+            <div class="postlist">
+              <s_cover_item>
+                <article class="post pane reveal">
+                  <a class="post__link" href="[##_cover_item_url_##]"><span class="sr">[##_cover_item_title_##]</span></a>
+                  <s_cover_item_thumbnail>
+                    <div class="post__thumb"><img src="[##_cover_item_thumbnail_##]" alt="" loading="lazy"></div>
+                  </s_cover_item_thumbnail>
+                  <div class="post__body">
+                    <h3 class="post__title clamp-2">[##_cover_item_title_##]</h3>
+                    <s_cover_item_article_info>
+                      <div class="post__meta">
+                        <time>[##_cover_item_simple_date_##]</time>
+                        <a href="[##_cover_item_category_url_##]">[##_cover_item_category_##]</a>
+                      </div>
+                    </s_cover_item_article_info>
+                    <s_cover_item_not_article_info>
+                      <p class="post__summary clamp-2">[##_cover_item_summary_##]</p>
+                    </s_cover_item_not_article_info>
+                  </div>
+                </article>
+              </s_cover_item>
+            </div>
+          </section>
+        </s_cover>
+
+        <s_cover name="zigzag">
+          <section class="cover wrap wrap--wide" data-view="zigzag">
+            <h2 class="cover__title">[##_cover_title_##]</h2>
+            <div class="postlist">
+              <s_cover_item>
+                <article class="post pane reveal">
+                  <a class="post__link" href="[##_cover_item_url_##]"><span class="sr">[##_cover_item_title_##]</span></a>
+                  <s_cover_item_thumbnail>
+                    <div class="post__thumb"><img src="[##_cover_item_thumbnail_##]" alt="" loading="lazy"></div>
+                  </s_cover_item_thumbnail>
+                  <div class="post__body">
+                    <h3 class="post__title clamp-2">[##_cover_item_title_##]</h3>
+                    <s_cover_item_article_info>
+                      <p class="post__summary clamp-3">[##_cover_item_summary_##]</p>
+                      <div class="post__meta">
+                        <time>[##_cover_item_simple_date_##]</time>
+                        <a href="[##_cover_item_category_url_##]">[##_cover_item_category_##]</a>
+                      </div>
+                    </s_cover_item_article_info>
+                    <s_cover_item_not_article_info>
+                      <p class="post__summary clamp-3">[##_cover_item_summary_##]</p>
+                    </s_cover_item_not_article_info>
+                  </div>
+                </article>
+              </s_cover_item>
+            </div>
+          </section>
+        </s_cover>
+
+        <s_cover name="slideshow">
+          <section class="cover wrap wrap--wide" data-view="slideshow">
+            <h2 class="cover__title">[##_cover_title_##]</h2>
+            <div class="postlist">
+              <s_cover_item>
+                <article class="post pane">
+                  <a class="post__link" href="[##_cover_item_url_##]"><span class="sr">[##_cover_item_title_##]</span></a>
+                  <s_cover_item_thumbnail>
+                    <div class="post__thumb"><img src="[##_cover_item_thumbnail_##]" alt="" loading="lazy"></div>
+                  </s_cover_item_thumbnail>
+                  <div class="post__body">
+                    <h3 class="post__title clamp-2">[##_cover_item_title_##]</h3>
+                    <s_cover_item_article_info>
+                      <div class="post__meta"><time>[##_cover_item_simple_date_##]</time></div>
+                    </s_cover_item_article_info>
+                    <s_cover_item_not_article_info>
+                      <p class="post__summary clamp-2">[##_cover_item_summary_##]</p>
+                    </s_cover_item_not_article_info>
+                  </div>
+                </article>
+              </s_cover_item>
+            </div>
+          </section>
+        </s_cover>
+
+      </s_cover_rep>
+    </s_cover_group>
+
+    <!-- ── 글 목록 (카테고리 / 검색 / 홈) ─────────────────────────────── -->
+    <s_list>
+      <section data-view="[##_list_style_##]">
+        <div class="hero">
+          <s_list_image>
+            <div class="hero__bg"><img src="[##_list_image_##]" alt=""></div>
+          </s_list_image>
+          <div class="hero__inner">
+            <h1 class="hero__title">[##_list_conform_##]</h1>
+            <p class="hero__desc">[##_list_description_##]</p>
+          </div>
+        </div>
+
+        <div class="wrap wrap--wide">
+          <div class="postlist">
+            <s_list_rep>
+              <article class="post pane reveal">
+                <a class="post__link" href="[##_list_rep_link_##]"><span class="sr">[##_list_rep_title_##]</span></a>
+                <s_list_rep_thumbnail>
+                  <div class="post__thumb"><img src="[##_list_rep_thumbnail_##]" alt="" loading="lazy"></div>
+                </s_list_rep_thumbnail>
+                <div class="post__body">
+                  <h2 class="post__title clamp-2">[##_list_rep_title_##]</h2>
+                  <p class="post__summary clamp-2">[##_list_rep_summary_##]</p>
+                  <div class="post__meta">
+                    <time>[##_list_rep_regdate_##]</time>
+                    <a href="[##_list_rep_category_link_##]">[##_list_rep_category_##]</a>
+                  </div>
+                </div>
+              </article>
+            </s_list_rep>
+          </div>
+        </div>
+      </section>
+    </s_list>
+
+    <!-- ═══ 홈 섹션 ═══════════════════════════════════════════════════════
+         카테고리·인기 글·태그·최근 댓글. 전부 사이드바에 이미 있는
+         데이터를 복제해 만듭니다. 서버 치환자를 한 번 더 심으면 같은
+         id 가 두 벌 생기고, 접기 스크립트가 어느 쪽을 잡을지 모르게
+         됩니다.                                                        -->
+    <div class="homesections" id="homesections" data-home-posts="[##_var_home-posts_##]"></div>
+
+    <!-- ── 글 / 페이지 / 보호된 글 ────────────────────────────────────── -->
+    <s_article_rep>
+
+      <s_permalink_article_rep>
+        <article class="entry" id="permalink">
+          <div class="hero hero--tall">
+            <s_article_rep_thumbnail>
+              <div class="hero__bg"><img src="[##_article_rep_thumbnail_url_##]" alt=""></div>
+            </s_article_rep_thumbnail>
+            <div class="hero__inner">
+              <a class="hero__eyebrow" href="[##_article_rep_category_link_##]">[##_article_rep_category_##]</a>
+              <h1 class="hero__title">[##_article_rep_title_##]</h1>
+              <div class="hero__meta">
+                <time>[##_article_rep_date_##]</time>
+                <s_ad_div>
+                  <span class="adminbar">
+                    <a href="[##_s_ad_m_link_##]">수정</a>
+                    <a href="#" onclick="[##_s_ad_d_onclick_##]">삭제</a>
+                    <a href="#" onclick="[##_s_ad_s2_onclick_##]">[##_s_ad_s1_label_##]</a>
+                  </span>
+                </s_ad_div>
+              </div>
+
+              <!-- 아래에 더 있다는 신호 — 스크롤을 시작하면 곧 흐려집니다 -->
+              <div class="scrolldown" aria-hidden="true">
+                <span class="scrolldown__mouse"><i></i></span>
+                <svg viewBox="0 0 20 20"><use href="#i-chevron"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="wrap">
+            <s_if_var_toc><div id="toc-slot"></div></s_if_var_toc>
+            <div class="article" id="article">[##_article_rep_desc_##]</div>
+
+            <div class="tags" id="tags"><s_tag_label>[##_tag_label_rep_##]</s_tag_label></div>
+
+            <s_article_related>
+              <section class="related pane">
+                <h2 class="related__title">'[##_article_rep_category_##]' 의 다른 글</h2>
+                <ul>
+                  <s_article_related_rep>
+                    <li class="related__item">
+                      <a href="[##_article_related_rep_link_##]">
+                        <span class="truncate">[##_article_related_rep_title_##]</span>
+                        <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-right"/></svg>
+                      </a>
+                    </li>
+                  </s_article_related_rep>
+                </ul>
+              </section>
+            </s_article_related>
+
+            <div class="author pane">
+              <img src="[##_image_##]" width="48" height="48" alt="" loading="lazy">
+              <div>
+                <div class="author__name">[##_blogger_##]</div>
+                <p class="author__desc">[##_desc_##]</p>
+              </div>
+            </div>
+
+            <!-- 댓글 -->
+            <s_rp>
+              <section class="comments" id="comments">
+                <h2 class="comments__title">댓글</h2>
+
+                <s_rp_input_form>
+                  <form class="cbox pane" onsubmit="return false">
+                    <label class="sr" for="rp-text">댓글 내용</label>
+                    <textarea id="rp-text" name="[##_rp_input_comment_##]" placeholder="댓글을 남겨보세요"></textarea>
+                    <div class="cbox__foot">
+                      <s_rp_member>
+                        <s_rp_guest>
+                          <div class="cbox__ids">
+                            <div class="field"><label class="sr" for="rp-name">이름</label>
+                              <input id="rp-name" autocomplete="username" name="[##_rp_input_name_##]" value="[##_guest_name_##]" placeholder="이름"></div>
+                            <div class="field"><label class="sr" for="rp-pw">비밀번호</label>
+                              <input id="rp-pw" type="password" maxlength="8" autocomplete="current-password" name="[##_rp_input_password_##]" value="[##_guest_password_##]" placeholder="비밀번호"></div>
+                          </div>
+                        </s_rp_guest>
+                      </s_rp_member>
+                      <input class="sr" id="rp-secret" type="checkbox" name="[##_rp_input_is_secret_##]">
+                      <label class="iconbtn glass" id="rp-secret-label" for="rp-secret" title="비밀 댓글">
+                        <span class="sr">비밀 댓글</span>
+                        <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-lock"/></svg>
+                      </label>
+                      <button class="btn btn--accent glass" type="button" onclick="[##_rp_onclick_submit_##]">
+                        <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><use href="#i-send"/></svg>등록
+                      </button>
+                    </div>
+                  </form>
+                </s_rp_input_form>
+
+                <s_rp_container>
+                  <ol class="clist">
+                    <s_rp_rep>
+                      <li class="comment pane [##_rp_rep_class_##]" id="[##_rp_rep_id_##]" data-foldable="[##_var_foldable-reply_##]">
+                        <div class="comment__head">
+                          <img class="comment__avatar" src="[##_rp_rep_logo_##]" width="36" height="36" alt="" loading="lazy">
+                          <div>
+                            <div class="comment__name">[##_rp_rep_name_##]</div>
+                            <time class="comment__date">[##_rp_rep_date_##]</time>
+                          </div>
+                        </div>
+                        <div class="comment__body">[##_rp_rep_desc_##]</div>
+                        <div class="comment__actions">
+                          <a href="#" onclick="[##_rp_rep_onclick_delete_##]">수정·삭제</a>
+                          <a href="#" onclick="[##_rp_rep_onclick_reply_##]">답글</a>
+                        </div>
+                        <s_rp2_container>
+                          <ol class="comment__replies">
+                            <s_rp2_rep>
+                              <li class="comment pane [##_rp_rep_class_##]" id="[##_rp_rep_id_##]">
+                                <div class="comment__head">
+                                  <img class="comment__avatar" src="[##_rp_rep_logo_##]" width="36" height="36" alt="" loading="lazy">
+                                  <div>
+                                    <div class="comment__name">[##_rp_rep_name_##]</div>
+                                    <time class="comment__date">[##_rp_rep_date_##]</time>
+                                  </div>
+                                </div>
+                                <div class="comment__body">[##_rp_rep_desc_##]</div>
+                                <div class="comment__actions">
+                                  <a href="#" onclick="[##_rp_rep_onclick_delete_##]">수정·삭제</a>
+                                </div>
+                              </li>
+                            </s_rp2_rep>
+                          </ol>
+                        </s_rp2_container>
+                      </li>
+                    </s_rp_rep>
+                  </ol>
+                </s_rp_container>
+              </section>
+            </s_rp>
+          </div>
+        </article>
+      </s_permalink_article_rep>
+
+      <s_page_rep>
+        <article class="entry" id="page">
+          <div class="hero">
+            <s_article_rep_thumbnail>
+              <div class="hero__bg"><img src="[##_article_rep_thumbnail_url_##]" alt=""></div>
+            </s_article_rep_thumbnail>
+            <div class="hero__inner">
+              <h1 class="hero__title">[##_article_rep_title_##]</h1>
+              <div class="hero__meta"><time>[##_article_rep_date_##]</time></div>
+            </div>
+          </div>
+          <div class="wrap">
+            <s_if_var_toc><div id="toc-slot"></div></s_if_var_toc>
+            <div class="article" id="article">[##_article_rep_desc_##]</div>
+          </div>
+        </article>
+      </s_page_rep>
+
+      <s_article_protected>
+        <s_permalink_article_rep>
+          <div class="wrap" id="protected">
+            <div class="locked">
+              <div class="locked__icon">
+                <svg viewBox="0 0 20 20" width="24" height="24" aria-hidden="true"><use href="#i-lock"/></svg>
+              </div>
+              <h1 class="hero__title" style="font-size:var(--t-title2)">[##_article_rep_title_##]</h1>
+              <p class="hero__desc">보호된 글입니다. 비밀번호를 입력하세요.</p>
+              <div class="field glass" style="width:14rem">
+                <label class="sr" for="[##_article_password_##]">비밀번호</label>
+                <input id="[##_article_password_##]" name="[##_article_password_##]" type="password" maxlength="16"
+                       placeholder="비밀번호" onkeydown="if (event.keyCode == 13)[##_article_dissolve_##]">
+              </div>
+            </div>
+          </div>
+        </s_permalink_article_rep>
+      </s_article_protected>
+
+    </s_article_rep>
+
+    <!-- ── 공지사항 ───────────────────────────────────────────────────── -->
+    <s_notice_rep>
+      <s_index_article_rep>
+        <div class="wrap wrap--wide">
+          <article class="post pane">
+            <a class="post__link" href="[##_notice_rep_link_##]"><span class="sr">[##_notice_rep_title_##]</span></a>
+            <s_notice_rep_thumbnail>
+              <div class="post__thumb"><img src="[##_notice_rep_thumbnail_url_##]" alt="" loading="lazy"></div>
+            </s_notice_rep_thumbnail>
+            <div class="post__body">
+              <h2 class="post__title clamp-2">[##_notice_rep_title_##]</h2>
+              <p class="post__summary clamp-2">[##_notice_rep_summary_##]</p>
+              <div class="post__meta"><time>[##_notice_rep_date_##]</time><span>· 공지</span></div>
+            </div>
+          </article>
+        </div>
+      </s_index_article_rep>
+
+      <s_permalink_article_rep>
+        <article class="entry" id="notice">
+          <div class="hero hero--tall">
+            <s_notice_rep_thumbnail>
+              <div class="hero__bg"><img src="[##_notice_rep_thumbnail_url_##]" alt=""></div>
+            </s_notice_rep_thumbnail>
+            <div class="hero__inner">
+              <a class="hero__eyebrow" href="/notice">공지사항</a>
+              <h1 class="hero__title">[##_notice_rep_title_##]</h1>
+              <div class="hero__meta"><time>[##_notice_rep_date_##]</time></div>
+
+              <!-- 아래에 더 있다는 신호 — 스크롤을 시작하면 곧 흐려집니다 -->
+              <div class="scrolldown" aria-hidden="true">
+                <span class="scrolldown__mouse"><i></i></span>
+                <svg viewBox="0 0 20 20"><use href="#i-chevron"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="wrap">
+            <s_if_var_toc><div id="toc-slot"></div></s_if_var_toc>
+            <div class="article" id="article">[##_notice_rep_desc_##]</div>
+          </div>
+        </article>
+      </s_permalink_article_rep>
+    </s_notice_rep>
+
+    <!-- ── 태그 클라우드 ──────────────────────────────────────────────── -->
+    <s_tag>
+      <div class="hero">
+        <div class="hero__inner"><h1 class="hero__title">태그</h1></div>
+      </div>
+      <div class="wrap wrap--wide">
+        <div class="tagcloud">
+          <s_tag_rep>
+            <a class="chip pane [##_tag_class_##]" href="[##_tag_link_##]">
+              <svg viewBox="0 0 20 20" width="13" height="13" style="margin-right:.3rem;opacity:.5" aria-hidden="true"><use href="#i-tag"/></svg>[##_tag_name_##]
+            </a>
+          </s_tag_rep>
+        </div>
+      </div>
+    </s_tag>
+
+    <!-- ── 방명록 ─────────────────────────────────────────────────────── -->
+    <s_guest>
+      <div class="hero">
+        <div class="hero__inner"><h1 class="hero__title">방명록</h1></div>
+      </div>
+      <div class="wrap">
+        <section class="comments" id="guestbook" style="margin-top:0">
+          <s_guest_input_form>
+            <form class="cbox pane" onsubmit="return false">
+              <label class="sr" for="gb-text">방명록 내용</label>
+              <textarea id="gb-text" name="[##_guest_textarea_body_##]" placeholder="방명록을 남겨보세요"></textarea>
+              <div class="cbox__foot">
+                <s_guest_member>
+                  <s_guest_form>
+                    <div class="cbox__ids">
+                      <div class="field"><label class="sr" for="gb-name">이름</label>
+                        <input id="gb-name" autocomplete="username" name="[##_guest_input_name_##]" value="[##_guest_name_##]" placeholder="이름"></div>
+                      <div class="field"><label class="sr" for="gb-pw">비밀번호</label>
+                        <input id="gb-pw" type="password" maxlength="8" autocomplete="current-password" name="[##_guest_input_password_##]" value="[##_guest_password_##]" placeholder="비밀번호"></div>
+                    </div>
+                  </s_guest_form>
+                </s_guest_member>
+                <input class="sr" id="gb-secret" type="checkbox" name="[##_guest_input_is_secret_##]">
+                <label class="iconbtn glass" id="gb-secret-label" for="gb-secret" title="비밀 방명록">
+                  <span class="sr">비밀 방명록</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-lock"/></svg>
+                </label>
+                <button class="btn btn--accent glass" type="button" onclick="[##_guest_onclick_submit_##]">
+                  <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><use href="#i-send"/></svg>등록
+                </button>
+              </div>
+            </form>
+          </s_guest_input_form>
+
+          <s_guest_container>
+            <ol class="clist">
+              <s_guest_rep>
+                <li class="comment pane [##_guest_rep_class_##]" id="[##_guest_rep_id_##]" data-foldable="[##_var_foldable-reply_##]">
+                  <div class="comment__head">
+                    <img class="comment__avatar" src="[##_guest_rep_logo_##]" width="36" height="36" alt="" loading="lazy">
+                    <div>
+                      <div class="comment__name">[##_guest_rep_name_##]</div>
+                      <time class="comment__date">[##_guest_rep_date_##]</time>
+                    </div>
+                  </div>
+                  <div class="comment__body">[##_guest_rep_desc_##]</div>
+                  <div class="comment__actions">
+                    <a href="#" onclick="[##_guest_rep_onclick_delete_##]">수정·삭제</a>
+                    <a href="#" onclick="[##_guest_rep_onclick_reply_##]">답글</a>
+                  </div>
+                  <s_guest_reply_container>
+                    <ol class="comment__replies">
+                      <s_guest_reply_rep>
+                        <li class="comment pane [##_guest_rep_class_##]" id="[##_guest_rep_id_##]">
+                          <div class="comment__head">
+                            <img class="comment__avatar" src="[##_guest_rep_logo_##]" width="36" height="36" alt="" loading="lazy">
+                            <div>
+                              <div class="comment__name">[##_guest_rep_name_##]</div>
+                              <time class="comment__date">[##_guest_rep_date_##]</time>
+                            </div>
+                          </div>
+                          <div class="comment__body">[##_guest_rep_desc_##]</div>
+                          <div class="comment__actions">
+                            <a href="#" onclick="[##_guest_rep_onclick_delete_##]">수정·삭제</a>
+                          </div>
+                        </li>
+                      </s_guest_reply_rep>
+                    </ol>
+                  </s_guest_reply_container>
+                </li>
+              </s_guest_rep>
+            </ol>
+          </s_guest_container>
+        </section>
+      </div>
+    </s_guest>
+
+    <!-- ── 페이지네이션 ───────────────────────────────────────────────── -->
+    <s_paging>
+      <nav class="pager glass" aria-label="페이지">
+        <a class="[##_no_more_prev_##]" [##_prev_page_##]="">
+          <span class="sr">이전</span><svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-left"/></svg>
+        </a>
+        <s_paging_rep>
+          <a [##_paging_rep_link_##]="">[##_paging_rep_link_num_##]</a>
+        </s_paging_rep>
+        <a class="[##_no_more_next_##]" [##_next_page_##]="">
+          <span class="sr">다음</span><svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-right"/></svg>
+        </a>
+      </nav>
+    </s_paging>
+
+  </main>
+
+  <!-- ═══ 스크롤스파이 ════════════════════════════════════════════════════ -->
+  <s_if_var_scrollspy>
+    <!-- 화면 오른쪽 가장자리에 붙은 서랍 손잡이 -->
+    <button class="spy__tab" type="button" id="spy-toggle" aria-controls="spy" aria-expanded="false" hidden>
+      <span class="sr">목차 보기</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-list"/></svg>
+    </button>
+    <nav class="spy glass" id="spy" aria-label="목차" hidden>
+      <div class="spy__scroll"><ol id="spy-list"></ol></div>
+    </nav>
+  </s_if_var_scrollspy>
+
+  <!-- ═══ 하단 도크 ═══════════════════════════════════════════════════════ -->
+  <!-- ═══ 커서 ═════════════════════════════════════════════════════════════
+       포인터가 정확한 기기에서만 켜집니다. 손가락에는 커서가 없고,
+       모션을 줄이기로 한 사람에게는 따라다니는 것이 방해입니다.     -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <canvas class="cursor__trail" id="cursor-trail"></canvas>
+    <span class="cursor__beam"></span>
+  </div>
+
+  <!-- ═══ 구독 토스트 ══════════════════════════════════════════════════════
+       처음 온 사람에게만, 그것도 화면이 자리를 잡은 뒤에 조용히
+       올라옵니다. 닫으면 오늘 하루는 다시 묻지 않습니다.            -->
+  <aside class="subtoast glass glass--thick" id="subtoast" role="status" hidden>
+    <button class="subtoast__close" type="button" id="subtoast-close">
+      <span class="sr">닫기</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-close"/></svg>
+    </button>
+
+    <div class="subtoast__cat" aria-hidden="true">
+      <svg viewBox="0 0 72 60">
+        <path class="cat__tail" d="M60 46c7 0 9-6 6.5-10.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <path d="M20 17 21.5 5.5 31 12.5z" fill="currentColor"/>
+        <path d="M52 17 50.5 5.5 41 12.5z" fill="currentColor"/>
+        <ellipse cx="36" cy="24" rx="17" ry="14" fill="currentColor"/>
+        <g class="cat__eyes">
+          <ellipse cx="29" cy="23" rx="2.3" ry="3.1"/>
+          <ellipse cx="43" cy="23" rx="2.3" ry="3.1"/>
+        </g>
+        <path d="M34 29.5h4L36 32z" class="cat__nose"/>
+        <path d="M13 23h6M13 28h6M53 23h6M53 28h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".45"/>
+        <rect x="15" y="35" width="42" height="15" rx="3" class="cat__screen"/>
+        <rect x="19" y="38.5" width="34" height="8" rx="1.5" class="cat__glow"/>
+        <rect x="8" y="49" width="56" height="5" rx="2.5" fill="currentColor" opacity=".85"/>
+        <ellipse cx="22" cy="49.5" rx="4.2" ry="2.7" fill="currentColor"/>
+        <ellipse cx="50" cy="49.5" rx="4.2" ry="2.7" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <div class="subtoast__body">
+      <p class="subtoast__title">새 글 나오면 알려드릴까요?</p>
+      <p class="subtoast__desc">구독해 두면 놓치지 않아요.</p>
+      <div class="subtoast__actions">
+        <button class="btn btn--accent glass" type="button" id="subtoast-sub">
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><use href="#i-star"/></svg>구독하기
+        </button>
+        <button class="subtoast__later" type="button" id="subtoast-later">오늘은 그만</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="dock glass" id="dock">
+    <!-- 평소엔 접혀 있고, 손잡이를 누르면 펼쳐집니다 -->
+    <!-- 접혀 있을 때 이 하나가 세 가지(맨 위로 · 테마 · 밝기)를 대표합니다.
+         반달 아이콘을 쓰고 있었는데, 그건 안에 있는 테마 버튼과 같은 그림이라
+         "눌렀더니 같은 게 또 나온다" 로 읽혔습니다. 조절기 그림으로 바꿉니다 —
+         무엇이 들었는지는 몰라도 "여기서 뭔가 맞춘다" 는 건 전해집니다. -->
+    <button class="dock__handle" type="button" id="dock-handle" aria-controls="dock" aria-expanded="false">
+      <span class="sr">화면 조절</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-sliders"/></svg>
+    </button>
+
+    <div class="dock__items" id="dock-items">
+    <button class="dock__btn" type="button" id="appearance-btn" aria-controls="appearance" aria-expanded="false">
+      <span class="sr">화면 설정</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-contrast"/></svg>
+    </button>
+
+    <button class="dock__btn" type="button" id="theme-btn">
+      <span class="sr">테마 전환</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true" id="theme-icon"><use href="#i-moon"/></svg>
+    </button>
+
+    <a class="dock__btn" href="#top" id="totop-btn">
+      <span class="sr">맨 위로</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-up"/></svg>
+    </a>
+    </div>
+
+    <!-- 화면 설정 팝오버 — iOS 27 의 투명도 조절 -->
+    <div class="popover glass glass--thick" id="appearance" role="group" aria-label="화면 설정">
+      <p class="popover__title">화면</p>
+
+      <div class="popover__row">
+        <div class="popover__head">
+          <label for="clarity">유리 투명도</label>
+          <span class="popover__value" id="clarity-value">50%</span>
+        </div>
+        <div class="slider">
+          <input class="range" id="clarity" type="range" min="0" max="100" step="1" value="50">
+          <svg class="slider__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-contrast"/></svg>
+        </div>
+      </div>
+
+      <div class="popover__row">
+        <div class="popover__head"><span>테마</span></div>
+        <div class="segmented" id="theme-seg">
+          <button type="button" data-theme="light">라이트</button>
+          <button type="button" data-theme="dark">다크</button>
+          <button type="button" data-theme="auto">시스템</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.shell -->
+</s_t3>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     컨트롤러 — 바닐라 JS. 외부 의존성 없음.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  var root = document.documentElement;
+  var lsGet = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* ── 테마 ──────────────────────────────────────────────────────────── */
+  var media = matchMedia('(prefers-color-scheme: dark)');
+
+  function resolve(pref) {
+    return pref === 'auto' ? (media.matches ? 'dark' : 'light') : pref;
+  }
+
+  function applyTheme(pref) {
+    var mode = resolve(pref);
+    root.classList.toggle('dark', mode === 'dark');
+
+    var use = $('#theme-icon use');
+    if (use) use.setAttribute('href', mode === 'dark' ? '#i-sun' : '#i-moon');
+
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', mode === 'dark' ? '#101013' : '#f2f2f7');
+
+    /* 코드 하이라이팅 테마도 함께 바꿉니다 */
+    var hl = $('#hl-light'), hd = $('#hl-dark');
+    if (hl) hl.disabled = (mode === 'dark');
+    if (hd) hd.disabled = (mode !== 'dark');
+
+    $$('#theme-seg button').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.theme === pref);
+    });
+
+    try { localStorage.setItem('lucid-theme', pref); } catch (e) {}
+    window.LUCID.theme = pref;
+    requestAnimationFrame(moveSegment);
+  }
+
+  media.addEventListener('change', function () {
+    if (lsGet('lucid-theme') === 'auto') applyTheme('auto');
+  });
+
+  /* ── 유리 투명도 (iOS 27) ──────────────────────────────────────────── */
+  function bindClarity() {
+    var slider = $('#clarity');
+    var value = $('#clarity-value');
+    if (!slider) return;
+
+    function paint(v) {
+      var pct = Math.round(v * 100);
+      root.style.setProperty('--clarity', String(v));
+      /* WebKit 트랙은 가상요소로 채울 수 없어 그라디언트 정지점을 넘겨줍니다 */
+      slider.style.setProperty('--fill-pct', pct + '%');
+      if (value) value.textContent = pct + '%';
+    }
+
+    slider.value = String(Math.round(window.LUCID.clarity * 100));
+    paint(window.LUCID.clarity);
+
+    slider.addEventListener('input', function () {
+      var v = Math.min(1, Math.max(0, slider.value / 100));
+      window.LUCID.clarity = v;
+      paint(v);
+    });
+
+    slider.addEventListener('change', function () {
+      try { localStorage.setItem('lucid-clarity', String(window.LUCID.clarity)); } catch (e) {}
+    });
+  }
+
+  /* ── 팝오버 / 사이드바 ─────────────────────────────────────────────── */
+  function toggle(el, btn, on) {
+    if (!el) return;
+    el.hidden = false;
+    el.classList.toggle('is-open', on);
+    if (btn) btn.setAttribute('aria-expanded', String(on));
+  }
+
+  function bindOverlays() {
+    var sidebar = $('#sidebar'), scrim = $('#scrim'), menuBtn = $('#menu-btn');
+
+    function setSidebar(on) {
+      /* 넓은 화면에서 사이드바는 이미 열려 있습니다. 그래도 이 버튼은
+         살아 있어야 합니다 — 누르면 나머지가 어두워지면서 사이드바만
+         남습니다. 여는 동작이 아니라 '거기를 보라' 는 신호입니다.
+         (스크림은 CSS 에서 사이드바 폭만큼 비켜 서 있습니다) */
+      var wide = matchMedia('(min-width: 1180px)').matches &&
+                 document.getElementById('shell').classList.contains('shell--sidebar');
+
+      toggle(sidebar, menuBtn, on);
+      toggle(scrim, null, on);
+
+      /* 본문 스크롤을 잠그는 건 사이드바가 화면을 덮을 때뿐입니다 */
+      document.body.style.overflow = (on && !wide) ? 'hidden' : '';
+    }
+
+    if (menuBtn) menuBtn.addEventListener('click', function () {
+      setSidebar(!sidebar.classList.contains('is-open'));
+    });
+    if (scrim) scrim.addEventListener('click', function () { setSidebar(false); });
+
+    /* 팝오버 열고 닫기는 LIQUID 층(모프+융합)이 담당합니다.
+       여기서 중복으로 토글하면 두 애니메이션이 서로를 취소합니다. */
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      setSidebar(false);
+    });
+
+    /* 사이드바 링크를 누르면 자동으로 닫힙니다 (모바일) */
+    if (sidebar) sidebar.addEventListener('click', function (e) {
+      if (e.target.closest('a') && innerWidth < 1180) setSidebar(false);
+    });
+  }
+
+  /* ── 스크롤: 진행바 · 상단바 축소 · 도크 축소 ──────────────────────── */
+  function bindScroll() {
+    var bar = $('#progress'), topbar = $('#topbar'), dock = $('#dock');
+    var hint = $('.scrolldown');
+    var idle = null, ticking = false;
+
+    /* 이 페이지의 '첫 화면' 이 무엇인지 먼저 정합니다.
+       홈은 .hhero, 나머지는 .hero 입니다.
+
+       ⚠ 예전에는 무조건 $('.hero') 를 잡았습니다. 그런데 홈에서는 그
+         목록 히어로를 감춰 뒀기 때문에(§35) offsetHeight 가 0 이 되고,
+         기준점이 -80px 이 되어 y > -80 이 늘 참 — 즉 홈은 맨 위에서부터
+         상단바가 알약으로 떠 있었습니다. 배경에 얹혔다가 떠오르는
+         그 전환이 홈에서만 통째로 사라진 이유입니다. */
+    var hero = $('.hhero');
+    if (!hero || !hero.offsetHeight) hero = $('#main .hero');
+    if (hero && !hero.offsetHeight) hero = null;
+
+    /* 맨 위에서 상단바는 투명합니다. 그런데 히어로가 사진이면 그 밑은
+       어두우므로, 라이트 모드의 검은 글씨가 사진에 묻힙니다.
+       사진이 깔린 글에서만 상단바의 글자색 변수를 흰색으로 갈아끼웁니다.
+
+       감춰진 히어로의 사진까지 세면 안 됩니다 — 홈에서 흰 글씨가 되어
+       라이트 모드에서 글자가 날아갑니다. 지금 쓰는 히어로 안만 봅니다. */
+    if (topbar && hero && hero.querySelector('.hero__bg')) {
+      topbar.classList.add('is-over-media');
+    }
+
+    function frame() {
+      ticking = false;
+      var y = scrollY;
+      var max = document.documentElement.scrollHeight - innerHeight;
+
+      if (bar) bar.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+
+      if (topbar) {
+        /* 상단바는 스크롤 양에 비례해 모입니다.
+           기준선을 넘는 순간 클래스를 켜는 방식이면 바가 통째로 튑니다.
+           대신 0~1 진행도를 넘겨 CSS 가 폭·모서리·유리를 직접 계산하게
+           합니다. 손가락을 반만 굴리면 바도 반만 모입니다.
+
+           마지막 20% 는 미리 끝냅니다(0.8 로 나눔). 히어로 끝에 딱 맞춰
+           1 이 되게 두면, 목록이 화면에 들어오는 순간에도 바가 아직
+           모이는 중이라 글과 겹쳐 어수선해집니다.
+
+           높이는 여전히 바꾸지 않습니다 — 스크롤 중에 쓰는 도구라서
+           크기가 변하면 눌러야 할 버튼이 손 밑에서 움직입니다. */
+        var span = hero ? Math.max(120, hero.offsetHeight - 80) : 120;
+        var tb = Math.min(1, Math.max(0, y / (span * 0.8)));
+
+        document.documentElement.style.setProperty('--tb', tb.toFixed(4));
+
+        /* 색처럼 중간값이 없는 것들은 여전히 클래스로 넘깁니다.
+           유리가 절반쯤 올라온 지점이 가장 덜 튑니다. */
+        topbar.classList.toggle('is-condensed', tb >= 0.55);
+      }
+
+      /* 스크롤 힌트는 목적을 다하는 즉시 물러납니다.
+         켜고 끄기가 아니라 스크롤량에 비례해 흐려지게 해야
+         '내가 움직여서 사라졌다' 는 인과가 손끝에 남습니다. */
+      if (hint) {
+        var f = 1 - Math.min(1, y / 180);
+        hint.style.setProperty('--hint', f.toFixed(3));
+      }
+
+      if (dock) {
+        dock.classList.add('is-condensed');
+        clearTimeout(idle);
+        idle = setTimeout(function () { dock.classList.remove('is-condensed'); }, 450);
+      }
+
+    }
+
+    addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    }, { passive: true });
+
+    frame();
+  }
+
+  /* ── 넘침 감시 ─────────────────────────────────────────────────────────
+     "이 영역이 잘렸는가" 를 판정해 클래스를 붙입니다. (페이드·펼치기 표시)
+
+     ⚠ 예전에는 requestAnimationFrame 한 번으로 끝냈습니다. 그런데 그 시점에
+       레이아웃이 아직 안 잡혀 scrollHeight 와 clientHeight 가 둘 다 0 이면
+       `0 <= 0 + 4` 가 참이 되어 "안 잘렸다" 고 잘못 판단하고 빠져나갑니다.
+       옛날 글의 목차가 잘려 있는데도 페이드가 없던 이유가 이것이었습니다.
+
+     그래서 한 번 재고 끝내지 않고, 크기가 바뀔 때마다 다시 잽니다.
+     웹폰트가 늦게 와서 줄 높이가 바뀌는 경우까지 이걸로 잡힙니다.      */
+  function watchOverflow(scroller, host, cls, onScroll) {
+    if (!scroller || !host) return;
+
+    function measure() {
+      var over = scroller.scrollHeight > scroller.clientHeight + 4;
+      host.classList.toggle(cls, over);
+      return over;
+    }
+
+    measure();
+
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(measure);
+      ro.observe(scroller);
+      /* 자식이 늘어나는 경우까지 (하이라이팅이 나중에 줄을 바꿀 수 있음) */
+      if (scroller.firstElementChild) ro.observe(scroller.firstElementChild);
+    }
+
+    addEventListener('load', measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+    if (onScroll) {
+      scroller.addEventListener('scroll', function () {
+        var atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 4;
+        host.classList.toggle('is-bottom', atBottom);
+      }, { passive: true });
+    }
+  }
+
+  /* ── 목차 + 스크롤스파이 ───────────────────────────────────────────── */
+  function slug(text, seen) {
+    var s = text.trim().toLowerCase()
+      .replace(/[^\w가-힣\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .slice(0, 60) || 'section';
+    var n = 1, base = s;
+    while (seen[s]) s = base + '-' + (++n);
+    seen[s] = true;
+    return s;
+  }
+
+  function buildToc() {
+    var article = $('#article');
+    if (!article) return;
+
+    var heads = $$('h2, h3, h4', article).filter(function (h) {
+      return h.textContent.trim();
+    });
+    if (heads.length < 2) return;
+
+    var seen = {};
+    var items = heads.map(function (h) {
+      if (!h.id) h.id = slug(h.textContent, seen);
+      var a = document.createElement('a');
+      a.className = 'anchor';
+      a.href = '#' + h.id;
+      a.setAttribute('aria-label', '이 섹션 링크');
+      a.textContent = '#';
+      h.appendChild(a);
+      return { el: h, id: h.id, text: h.textContent.replace(/#$/, '').trim(),
+               depth: +h.tagName[1] };
+    });
+
+    /* 본문 안 목차 카드 */
+    var slot = $('#toc-slot');
+    if (slot) {
+      var toc = document.createElement('nav');
+      toc.className = 'toc pane';
+      toc.setAttribute('aria-label', '목차');
+      toc.innerHTML =
+        '<button class="toc__head" type="button" aria-expanded="true">' +
+          '<span>목차<i class="toc__count"></i></span>' +
+          '<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-chevron"/></svg>' +
+        '</button>' +
+        '<ol class="toc__list"></ol>';
+      $('.toc__count', toc).textContent = items.length;
+      var list = $('.toc__list', toc);
+      items.forEach(function (it) {
+        var li = document.createElement('li');
+        li.className = 'toc__item';
+        li.dataset.depth = it.depth;
+        var a = document.createElement('a');
+        a.href = '#' + it.id;
+        a.textContent = it.text;
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+      $('.toc__head', toc).addEventListener('click', function () {
+        var on = toc.classList.toggle('is-collapsed');
+        this.setAttribute('aria-expanded', String(!on));
+      });
+
+      slot.replaceWith(toc);
+
+      /* 항목이 많아 잘리는 경우에만 페이드를 붙입니다 */
+      watchOverflow(list, toc, 'is-scrollable', true);
+    }
+
+    /* 우측 스크롤스파이 */
+    var spy = $('#spy'), spyList = $('#spy-list'), spyToggle = $('#spy-toggle');
+    if (!spy || !spyList) return;
+
+    var links = items.map(function (it) {
+      var li = document.createElement('li');
+      li.className = 'spy__item';
+      li.dataset.depth = it.depth;
+      var a = document.createElement('a');
+      a.href = '#' + it.id;
+      a.textContent = it.text;
+      li.appendChild(a);
+      spyList.appendChild(li);
+      return li;
+    });
+
+    spy.hidden = false;
+    if (spyToggle) {
+      spyToggle.hidden = false;
+      spyToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var on = spy.classList.toggle('is-open');
+        this.setAttribute('aria-expanded', String(on));
+      });
+
+      /* 서랍은 바깥을 누르면 닫힙니다.
+         손잡이를 다시 정확히 찾아 누르게 만들 이유가 없습니다.
+
+         본문에 붙어 있는 상태(is-docked)에서는 건드리지 않습니다.
+         그때는 서랍이 아니라 늘 거기 있는 목차라서, 글을 읽으려고
+         누른 것까지 닫힘으로 받으면 곤란합니다. */
+      document.addEventListener('click', function (e) {
+        if (!spy.classList.contains('is-open')) return;
+        if (spy.classList.contains('is-docked')) return;
+        if (spy.contains(e.target) || spyToggle.contains(e.target)) return;
+        spy.classList.remove('is-open');
+        spyToggle.setAttribute('aria-expanded', 'false');
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (spy.classList.contains('is-docked')) return;
+        spy.classList.remove('is-open');
+        spyToggle.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    /* 본문 오른쪽 여백을 실제로 재서, 목차가 들어갈 자리가 있을 때만
+       상시 노출합니다. 사이드바 때문에 본문이 화면 중앙이 아니므로
+       CSS 의 (100vw - 본문폭)/2 계산으로는 본문을 덮게 됩니다. */
+    var PANEL = 240;   /* .spy 의 폭(15rem) */
+    var MARGIN = 24;   /* 본문과 목차 사이 최소 간격 */
+
+    /* 세로 — 히어로(제목)가 보이는 동안에는 그 아래에서 시작합니다 */
+    function placeSpyTop() {
+      var topbar = $('#topbar');
+      var barH = topbar ? topbar.offsetHeight : 56;
+      var top = barH + 16;
+
+      var hero = $('.hero');
+      if (hero) {
+        var hr = hero.getBoundingClientRect();
+        if (hr.bottom > top) top = hr.bottom + 16;
+      }
+
+      /* 화면 아래로 밀려나지 않도록 상한을 둡니다 */
+      top = Math.min(top, innerHeight * 0.55);
+
+      /* :root 에도 같이 씁니다. 손잡이(.spy__tab)는 서랍 바깥에 있는
+         별개 요소라 이 값을 읽을 방법이 이것뿐입니다. 손잡이가 화면
+         정중앙에 있고 서랍은 위에서 나오면, 누른 자리와 열린 자리가
+         어긋나 보입니다. */
+      var maxH = Math.round(innerHeight - top - 24);
+      spy.style.setProperty('--spy-top', Math.round(top) + 'px');
+      spy.style.setProperty('--spy-max', maxH + 'px');
+      document.documentElement.style.setProperty('--spy-top', Math.round(top) + 'px');
+      document.documentElement.style.setProperty('--spy-max', maxH + 'px');
+
+      /* 서랍이 실제로 차지하는 높이는 내용에 따라 --spy-max 보다 짧습니다.
+         손잡이는 '보이는 서랍' 의 한가운데에 놓아야 자연스럽습니다. */
+      document.documentElement.style.setProperty(
+        '--spy-h', Math.round(Math.min(maxH, spy.scrollHeight || maxH)) + 'px');
+    }
+
+    function placeSpy() {
+      placeSpyTop();
+
+      var host = $('#article');
+      var wrap = host && host.closest('.wrap');
+      if (!wrap) return;
+
+      var gutter = innerWidth - wrap.getBoundingClientRect().right;
+
+      if (gutter >= PANEL + MARGIN * 2) {
+        spy.classList.add('is-docked', 'is-open');
+        spy.style.setProperty('--spy-right',
+          Math.max(MARGIN, (gutter - PANEL) / 2) + 'px');
+        if (spyToggle) spyToggle.hidden = true;
+      } else {
+        spy.classList.remove('is-docked', 'is-open');
+        spy.style.removeProperty('--spy-right');
+        if (spyToggle) {
+          spyToggle.hidden = false;
+          spyToggle.setAttribute('aria-expanded', 'false');
+        }
+      }
+    }
+
+    placeSpy();
+
+    var rt = null;
+    addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(placeSpy, 120);
+    });
+
+    /* 스크롤 중에는 세로 위치만 다시 잽니다 (가로는 바뀔 일이 없음) */
+    var st = false;
+    addEventListener('scroll', function () {
+      if (st) return;
+      st = true;
+      requestAnimationFrame(function () { st = false; placeSpyTop(); });
+    }, { passive: true });
+
+    /* 현재 위치 추적 */
+    var active = -1;
+    var observer = new IntersectionObserver(function () {
+      var y = scrollY + innerHeight * 0.25;
+      var idx = 0;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].el.getBoundingClientRect().top + scrollY <= y) idx = i;
+      }
+      if (idx === active) return;
+      if (links[active]) links[active].classList.remove('is-active');
+      links[idx].classList.add('is-active');
+      active = idx;
+    }, { rootMargin: '0px', threshold: [0, 1] });
+
+    items.forEach(function (it) { observer.observe(it.el); });
+    addEventListener('scroll', function () {
+      var y = scrollY + innerHeight * 0.25;
+      var idx = 0;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].el.getBoundingClientRect().top + scrollY <= y) idx = i;
+      }
+      if (idx === active) return;
+      if (links[active]) links[active].classList.remove('is-active');
+      links[idx].classList.add('is-active');
+      active = idx;
+
+      /* 활성 항목이 목차 스크롤 밖으로 나가면 따라 올라옵니다 */
+      var el = links[idx];
+      var box = el.parentElement;
+      if (box && box.scrollHeight > box.clientHeight) {
+        var top = el.offsetTop - box.clientHeight / 2 + el.offsetHeight / 2;
+        box.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    }, { passive: true });
+  }
+
+  /* ── 코드블록: 헤더 · 줄번호 · 복사 ────────────────────────────────── */
+  var VOID = /^(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/i;
+
+  /* 줄을 넘어 열려 있는 태그는 각 줄 끝에서 닫고 다음 줄 앞에서 다시 엽니다.
+     이렇게 하지 않으면 여러 줄짜리 주석·문자열의 색이 첫 줄에서 끊깁니다.  */
+  function splitLines(html) {
+    var lines = html.replace(/\n$/, '').split('\n');
+    var open = [];
+    var re = /<(\/?)([a-zA-Z][^\s/>]*)([^>]*)>/g;
+    var out = '';
+
+    for (var i = 0; i < lines.length; i++) {
+      var prefix = open.join(''), m;
+      re.lastIndex = 0;
+      while ((m = re.exec(lines[i]))) {
+        if (m[1]) open.pop();
+        else if (!/\/\s*$/.test(m[3]) && !VOID.test(m[2])) open.push(m[0]);
+      }
+      var suffix = open.slice().reverse().map(function (t) {
+        return '</' + t.replace(/^<([a-zA-Z][^\s/>]*)[\s\S]*$/, '$1') + '>';
+      }).join('');
+      out += '<span class="code__line">' + prefix + (lines[i] || ' ') + suffix + '</span>';
+    }
+    return out;
+  }
+
+  /* highlight.js 는 CDN 에서 defer 로 들어옵니다. 없으면 조용히 건너뜁니다. */
+  function highlightCode() {
+    if (typeof hljs === 'undefined') return;
+    $$('#article pre > code').forEach(function (code) {
+      var pre = code.parentElement;
+      var lang = (pre.dataset.keLanguage || '').trim();
+      /* 티스토리는 언어를 pre 의 data 속성에만 담으므로 code 로 옮겨줍니다 */
+      if (lang && !/\blanguage-/.test(code.className)) {
+        code.classList.add('language-' + lang);
+      }
+      try { hljs.highlightElement(code); } catch (e) {}
+    });
+  }
+
+  function enhanceCode() {
+    $$('#article pre').forEach(function (pre) {
+      var code = $('code', pre);
+      if (!code || pre.dataset.ready) return;
+      pre.dataset.ready = '1';
+
+      var raw = code.textContent;
+      var lang = (pre.dataset.keLanguage ||
+                  (code.className.match(/language-([\w+#-]+)/) || [])[1] || '').trim();
+
+      if (raw.split('\n').filter(function (l) { return l.trim(); }).length < 2) {
+        pre.dataset.lines = 'off';
+      }
+
+      var head = document.createElement('div');
+      head.className = 'code__head';
+      head.innerHTML =
+        '<span class="code__dots">' +
+          '<i class="code__dot code__dot--red" aria-hidden="true">' +
+            '<svg viewBox="0 0 10 10"><use href="#i-mac-close"/></svg></i>' +
+          '<i class="code__dot code__dot--yellow" aria-hidden="true">' +
+            '<svg viewBox="0 0 10 10"><use href="#i-mac-min"/></svg></i>' +
+          '<button class="code__dot code__dot--green" type="button" ' +
+                  'aria-expanded="false" title="펼치기" disabled>' +
+            '<span class="sr">코드 펼치기</span>' +
+            '<svg viewBox="0 0 10 10" aria-hidden="true"><use href="#i-mac-expand"/></svg>' +
+          '</button>' +
+        '</span>' +
+        '<button class="code__copy" type="button">' +
+          '<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-copy"/></svg>복사</button>';
+
+      /* 언어 배지는 헤더가 아니라 코드 영역 우측 하단에 띄웁니다 */
+      if (lang) {
+        var badge = document.createElement('span');
+        badge.className = 'code__lang';
+        badge.textContent = lang;
+        pre.appendChild(badge);
+      }
+
+      /* 초록 신호등 = 펼치기 / 접기 (macOS 전체화면 버튼과 같은 자리) */
+      var green = $('.code__dot--green', head);
+      green.addEventListener('click', function () {
+        var on = pre.classList.toggle('is-expanded');
+        green.setAttribute('aria-expanded', String(on));
+        green.title = on ? '접기' : '펼치기';
+        $('.sr', green).textContent = on ? '코드 접기' : '코드 펼치기';
+        $('use', green).setAttribute('href', on ? '#i-mac-collapse' : '#i-mac-expand');
+        if (pre._syncGreen) pre._syncGreen();
+        if (!on) pre.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      });
+
+      var btn = $('.code__copy', head);
+      btn.addEventListener('click', function () {
+        var done = function () {
+          btn.classList.add('is-done');
+          btn.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-check"/></svg>완료';
+          setTimeout(function () {
+            btn.classList.remove('is-done');
+            btn.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-copy"/></svg>복사';
+          }, 1400);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(raw).then(done, function () { fallback(raw, done); });
+        } else {
+          fallback(raw, done);
+        }
+      });
+
+      code.innerHTML = splitLines(code.innerHTML);
+      pre.insertBefore(head, code);
+
+      /* 목차와 같은 함정 — 단발 측정은 레이아웃 전에 0/0 을 볼 수 있습니다 */
+      watchOverflow(code, pre, 'is-clipped', true);
+
+      /* ⚠ 펼치면 접을 수 없던 이유가 여기 있었습니다.
+           is-clipped 는 "지금 잘려 있는가" 입니다. 펼치는 순간 잘림이
+           풀리니 is-clipped 가 떨어지고, 그러면 아래 감시자가 버튼을
+           disabled 로 잠갔습니다. 펼치기는 되는데 접기는 안 되던 것.
+
+           펼쳐져 있는 동안에는 잠그지 않습니다 — 그때야말로 이 버튼이
+           할 일이 남아 있는 상태입니다. */
+      function syncGreen() {
+        green.disabled = !pre.classList.contains('is-expanded') &&
+                         !pre.classList.contains('is-clipped');
+      }
+      pre._syncGreen = syncGreen;
+
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(syncGreen).observe(code);
+      }
+      requestAnimationFrame(syncGreen);
+    });
+  }
+
+  function fallback(text, done) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:-9999px;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      done();
+    } catch (e) {
+      alert('복사에 실패했습니다');
+    }
+  }
+
+  /* ── 본문 정리 (티스토리 에디터가 심은 인라인 색상) ────────────────── */
+  function stripDecl(style, prop) {
+    return style.split(';').filter(function (d) {
+      return d.split(':')[0].trim().toLowerCase() !== prop;
+    }).join(';');
+  }
+
+  function cleanArticle() {
+    var article = $('#article');
+    if (!article) return;
+
+    /* ── 빈 문단 걷어내기 ────────────────────────────────────────────
+       티스토리 에디터는 줄바꿈을 <p>&nbsp;</p> 로 저장합니다. 글에
+       따라서는 문단의 절반 가까이가 그것이고, 그 빈 문단들이 간격
+       노릇을 합니다.
+
+       그러면 문단 사이가 글쓴이가 그날 엔터를 몇 번 눌렀는지에
+       달립니다. 어떤 데는 한 줄, 어떤 데는 세 줄. 빈 것을 걷어내고
+       간격은 CSS 가 일정하게 줍니다.
+
+       ⚠ 안에 이미지·표·코드가 든 문단은 건드리지 않습니다.
+         글자가 없다고 빈 게 아닙니다. */
+    $$('p', article).forEach(function (p) {
+      if (p.querySelector('img, iframe, figure, table, video, embed, object, hr, br + br')) return;
+      if (p.textContent.replace(/[\s\u00a0\u200b]/g, '').length) return;
+      p.remove();
+    });
+
+    /* 배경/글자색 인라인만 해제. 'color' 가 'border-color' 의 꼬리로
+       오탐되지 않도록 선언 단위로 비교합니다. 코드블록은 건드리지 않습니다. */
+    $$('[style]', article).forEach(function (el) {
+      if (el.closest('pre, [data-ke-type="codeblock"]')) return;
+      if (el.tagName === 'SPAN') return;
+
+      var out = stripDecl(stripDecl(el.getAttribute('style'), 'background-color'), 'color')
+                  .replace(/^;+|;+$/g, '').trim();
+      if (out) el.setAttribute('style', out);
+      else el.removeAttribute('style');
+    });
+
+    /* 코드블록 '컨테이너' 의 인라인 색상 해제
+       ⚠ 위 가드가 el.closest('pre, [data-ke-type=codeblock]') 로 거르는데,
+         <pre> 자기 자신도 closest 에 걸립니다. 그래서 컨테이너는 한 번도
+         정리된 적이 없었습니다.
+
+         티스토리 구버전 에디터는 선택한 코드 테마를 <pre> 의 인라인
+         style 에 구워 저장했습니다.
+             style="background-color:#f8f8f8; color:#383a42"
+         인라인은 !important 말고는 못 이기므로, 옛날 글의 코드블록만
+         다크모드에서 흰 판으로 남았습니다.
+
+         안쪽 토큰(span)은 건드리지 않으므로 하이라이팅은 그대로입니다. */
+    $$('pre, [data-ke-type="codeblock"]', article).forEach(function (el) {
+      var st = el.getAttribute('style');
+      if (!st) return;
+
+      var out = stripDecl(stripDecl(st, 'background-color'), 'color')
+                  .replace(/^;+|;+$/g, '').trim();
+
+      if (out) el.setAttribute('style', out);
+      else el.removeAttribute('style');
+    });
+
+    /* 형광펜 span 은 배경을 살리고 글자색만 대비에 맞게 보정합니다.
+       transparent / 낮은 알파는 건드리지 않습니다. */
+    $$('span[style*="background-color"]', article).forEach(function (el) {
+      if (el.closest('pre, [data-ke-type="codeblock"]')) return;
+      var m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
+      if (!m || m.length < 3) return;
+
+      var a = m.length > 3 ? parseFloat(m[3]) : 1;
+      if (a < 0.25) return;
+
+      var r = +m[0] * a + 255 * (1 - a);
+      var g = +m[1] * a + 255 * (1 - a);
+      var b = +m[2] * a + 255 * (1 - a);
+      el.style.color = (0.299 * r + 0.587 * g + 0.114 * b) < 140 ? '#fff' : '#000';
+    });
+
+    /* 티스토리가 붙이는 고정 크기 속성 제거 → 반응형으로 */
+    $$('img, iframe', article).forEach(function (el) {
+      el.removeAttribute('width');
+      el.removeAttribute('height');
+      if (el.tagName === 'IMG') el.loading = 'lazy';
+    });
+
+    /* 본문 이미지를 유리 액자에 끼웁니다.
+       figure 가 이미 있으면 그 figure 를 액자로 쓰고,
+       없으면 이미지 하나짜리 액자를 새로 만들어 감쌉니다. */
+    $$('img', article).forEach(function (img) {
+      if (img.closest('.frame')) return;
+
+      var fig = img.closest('figure');
+      if (fig) {
+        fig.classList.add('frame', 'pane');
+        return;
+      }
+
+      var wrap = document.createElement('figure');
+      wrap.className = 'frame pane';
+
+      var host = img.parentElement;
+      /* <p><img></p> 처럼 이미지만 든 문단은 통째로 대체합니다.
+         링크·표 셀·목록 항목은 구조라서 남겨 두고 이미지만 감쌉니다. */
+      if (host !== article && /^(P|DIV|SPAN)$/.test(host.tagName) &&
+          host.children.length === 1 && !host.textContent.trim()) {
+        host.replaceWith(wrap);
+      } else {
+        img.replaceWith(wrap);
+      }
+      wrap.appendChild(img);
+
+      if (img.alt) {
+        var cap = document.createElement('figcaption');
+        cap.textContent = img.alt;
+        wrap.appendChild(cap);
+      }
+    });
+  }
+
+  /* ── 본문 하단 태그를 유리 칩으로 ────────────────────────────────────
+     티스토리는 태그 사이에 ", " 를 문자 그대로 끼워 넣습니다.
+     칩 사이에 쉼표가 떠다니게 되므로 텍스트 노드를 걷어냅니다.        */
+  function styleTags() {
+    var box = $('#tags');
+    if (!box) return;
+
+    $$('a', box).forEach(function (a) {
+      a.classList.add('chip', 'pane');
+    });
+
+    Array.prototype.slice.call(box.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) n.remove();          /* 텍스트 노드(쉼표·공백) */
+    });
+  }
+
+  /* ── 티스토리가 끼워 넣는 구독 카드 제거 ────────────────────────────
+     티스토리는 본문 컨테이너 안에 스킨과 무관한 블록(구독 카드 등)을
+     주입합니다. 클래스명이 계정·시점마다 달라 CSS 로 특정하기 어려우니,
+     '우리가 만든 것이 아닌 직계 자식' 을 구조로 찾아 걷어냅니다.        */
+  function stripInjected() {
+    var entry = $('#permalink') || $('#page') || $('#notice');
+    if (!entry) return;
+
+    var wrap = entry.querySelector('.wrap');
+    if (!wrap) return;
+
+    var OURS = '#article, .toc, .tags, .related, .author, .comments, #toc-slot, ' +
+               '.container_postbtn, .revenue_unit_wrap, ins.adsbygoogle, [id^="google_ads"]';
+
+    Array.prototype.slice.call(wrap.children).forEach(function (el) {
+      if (el.matches(OURS)) return;              /* 우리 블록 */
+      if (el.querySelector(OURS)) return;        /* 우리 블록을 품고 있음 */
+      if (!el.textContent.trim() && !el.querySelector('img,iframe')) return;
+
+      el.dataset.lucidStripped = '1';
+      el.hidden = true;
+    });
+  }
+
+  /* ── 카테고리 접기 ─────────────────────────────────────────────────── */
+  function bindCategory() {
+    var cat = $('#category');
+    if (!cat || cat.dataset.foldable === 'false') return;
+
+    /* 티스토리는 카테고리 전체를 '분류 전체보기' 한 겹으로 감싸 보냅니다.
+       그 껍질까지 접혀 있으면 사이드바가 링크 한 줄로 보입니다.
+       최상위는 처음부터 열어 둡니다 — 접을 수 있다는 것만 알려주면 됩니다. */
+    $$(':scope > ul > li', cat).forEach(function (li) {
+      if (li.querySelector(':scope > ul')) li.classList.add('is-open');
+    });
+
+    $$('li', cat).forEach(function (li) {
+      var sub = li.querySelector(':scope > ul');
+      if (!sub) return;
+      li.classList.add('has-sub');
+      if (li.querySelector('.selected') || li.classList.contains('selected')) {
+        li.classList.add('is-open');
+      }
+      var link = li.querySelector(':scope > a');
+      if (!link) return;
+      link.addEventListener('click', function (e) {
+        /* 화살표 영역(오른쪽 28px)을 누르면 펼치기, 그 외에는 이동.
+           offsetX 는 글 수 배지(<span>) 위에서는 그 배지 기준이라 어긋납니다. */
+        if (e.clientX > link.getBoundingClientRect().right - 28) {
+          e.preventDefault();
+          li.classList.toggle('is-open');
+        }
+      });
+    });
+  }
+
+  /* ── 댓글이 그려지길 기다립니다 ──────────────────────────────────────
+     ⚠ 여기서 두 기능이 조용히 죽어 있었습니다.
+
+       주인장 말풍선(is-owner)도, 답글 접기(is-collapsed)도 부팅 때
+       한 번 돌고 끝이었습니다. 그런데 서버가 내려주는 원본 HTML 을
+       받아서 세어 보니 rp_admin 이 0 개였습니다 — 본문은 서버가 그려
+       주지만 댓글은 티스토리 스크립트가 나중에 채웁니다.
+
+       그러니 두 함수 모두 빈 목록을 받고 조용히 돌아왔던 것입니다.
+       예외도 안 나고 로그도 안 남으니 겉으로는 아무 일도 없어 보였고,
+       실제로 눈으로 볼 때마다 결과가 달랐던 것도 이 때문입니다
+       (댓글이 먼저 도착한 날은 되고, 늦은 날은 안 되고).
+
+     그래서 "있으면 바로, 없으면 생길 때" 로 바꿉니다.               */
+  function whenComments(fn) {
+    if ($$('.comment').length) { fn(); return; }
+    if (!('MutationObserver' in window)) return;
+
+    var mo = new MutationObserver(function () {
+      if (!$$('.comment').length) return;
+      mo.disconnect();
+      fn();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    /* 영원히 지켜보지는 않습니다. 댓글이 없는 글도 있으니까요. */
+    setTimeout(function () { mo.disconnect(); }, 15000);
+  }
+
+  /* ── 주인장 댓글 가려내기 ────────────────────────────────────────────
+     말풍선을 좌우로 나누려면 "이 댓글이 주인장 것인가" 를 알아야 합니다.
+     그런데 티스토리가 [##_rp_rep_class_##] 에 정확히 무엇을 넣는지는
+     버전마다 다릅니다. 그래서 한 가지만 믿지 않고 두 갈래로 봅니다.
+
+       ① 클래스에 manager·admin·owner 가 들어 있는가
+       ② 글쓴이 이름이 블로그 이름이나 닉네임과 같은가
+
+     ①만 쓰면 티스토리가 이름을 바꿀 때 조용히 깨지고, ②만 쓰면
+     같은 이름을 쓰는 손님이 주인장 자리에 앉습니다. 둘 중 하나라도
+     맞으면 주인장으로 봅니다.                                        */
+  function markOwnerComments() {
+    var list = $$('.comment');
+    if (!list.length) return;
+
+    var cfg = (typeof T !== 'undefined' && T && T.config) ? T.config : null;
+    var names = [];
+    if (cfg && cfg.BLOG) {
+      if (cfg.BLOG.title) names.push(cfg.BLOG.title.trim());
+      if (cfg.BLOG.nickName) names.push(cfg.BLOG.nickName.trim());
+    }
+
+    list.forEach(function (c) {
+      var byClass = /manager|admin|owner/i.test(c.className);
+
+      var nameEl = $('.comment__name', c);
+      var who = nameEl ? nameEl.textContent.replace(/\s+/g, ' ').trim() : '';
+      var byName = !!who && names.indexOf(who) !== -1;
+
+      if (byClass || byName) c.classList.add('is-owner');
+    });
+  }
+
+  /* ── 댓글 답글 접기 ────────────────────────────────────────────────── */
+  function bindReplies() {
+    $$('.comment[data-foldable]').forEach(function (c) {
+      if (c.dataset.foldable === 'false') return;
+      if (c.dataset.repliesReady) return;   /* 두 번 묶지 않도록 */
+      c.dataset.repliesReady = '1';
+      var replies = $('.comment__replies', c);
+      if (!replies || !replies.children.length) return;
+
+      c.classList.add('is-collapsed');
+      var actions = $('.comment__actions', c);
+      if (!actions) return;
+
+      var btn = document.createElement('a');
+      btn.href = '#';
+      btn.dataset.count = replies.children.length;
+      btn.textContent = '답글 ' + replies.children.length + '개';
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var on = c.classList.toggle('is-collapsed');
+        btn.textContent = on ? '답글 ' + replies.children.length + '개' : '답글 접기';
+      });
+      actions.appendChild(btn);
+    });
+  }
+
+  /* ── 진입 애니메이션 ───────────────────────────────────────────────── */
+  function bindReveal() {
+    var els = $$('.reveal');
+    if (!els.length || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('is-in');
+        io.unobserve(en.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ── 구독 버튼 (티스토리 도메인에서만) ───────────────────────────────
+     T.config 의 하위 객체는 페이지 종류에 따라 없을 수 있습니다.
+     한 군데라도 없으면 그냥 버튼을 숨긴 채 넘어갑니다.               */
+  function bindSubscribe() {
+    var btn = $('#subscribe-btn');
+    if (!btn) return;
+
+    var cfg = (typeof T !== 'undefined' && T && T.config) ? T.config : null;
+    if (!cfg || cfg.ROLE === 'owner') return;
+    if (!cfg.BLOG || !cfg.BLOG.id) return;
+
+    btn.hidden = false;
+    btn.dataset.blogId = cfg.BLOG.id;
+    if (window.TistoryBlog && TistoryBlog.tistoryUrl) btn.dataset.url = TistoryBlog.tistoryUrl;
+    btn.classList.toggle('is-on', !!(cfg.SUBSCRIPTION || {}).isConnected);
+    btn.addEventListener('click', function () { btn.classList.toggle('is-on'); });
+  }
+
+  /* ── 테마 컨트롤 바인딩 ─────────────────────────────────────────────
+     가장 먼저 붙입니다. 뒤쪽 초기화가 실패해도 테마 전환은 살아 있어야
+     하니까요. (예전에는 boot() 맨 끝에 붙어 있어서, 앞단계가 한 번
+     예외를 던지면 테마 버튼이 통째로 죽었습니다.)                    */
+  function bindTheme() {
+    var btn = $('#theme-btn');
+    if (btn) btn.addEventListener('click', function () {
+      applyTheme(resolve(window.LUCID.theme) === 'dark' ? 'light' : 'dark');
+    });
+
+    $$('#theme-seg button').forEach(function (b) {
+      b.addEventListener('click', function () { applyTheme(b.dataset.theme); });
+    });
+
+    var rt = null;
+    addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(moveSegment, 120);
+    });
+  }
+
+
+  /* ── 포인터를 따라 움직이는 스페큘러 (Liquid Glass 시그니처) ───────── */
+  function bindSpecular() {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    $$('.topbar, .dock, .popover, .sidebar, .spy, .pager, .field.glass, .mega__panel, .dropdown, .searchpop__panel').forEach(function (el) {
+      var raf = null;
+
+      el.addEventListener('pointermove', function (e) {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          raf = null;
+          var r = el.getBoundingClientRect();
+          el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+          el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+          el.style.setProperty('--spec', '1');
+        });
+      });
+
+      el.addEventListener('pointerleave', function () {
+        el.style.setProperty('--spec', '0');
+      });
+    });
+  }
+
+  /* ── 세그먼트 컨트롤 슬라이딩 인디케이터 ─────────────────────────────
+     transform: translateX(%) 의 100% 는 '부모' 가 아니라 '자기 자신' 의 폭이라
+     calc(100%/3 * i) 식으로는 절대 맞지 않습니다. 실제 픽셀로 계산합니다. */
+  function moveSegment() {
+    var seg = $('#theme-seg');
+    if (!seg) return;
+
+    var btns = $$('button', seg);
+    var active = null;
+    for (var i = 0; i < btns.length; i++) {
+      if (btns[i].classList.contains('is-active')) { active = btns[i]; break; }
+    }
+    if (!active) active = btns[0];
+    if (!active || !active.offsetWidth) return;
+
+    seg.style.setProperty('--seg-w', active.offsetWidth + 'px');
+    seg.style.setProperty('--seg-x', (active.offsetLeft - 2) + 'px');
+  }
+
+  /* ── 히어로 시차 ───────────────────────────────────────────────────── */
+  function bindParallax() {
+    var bg = $('.hero__bg');
+    if (!bg || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var hero = bg.closest('.hero');
+    var ticking = false;
+
+    function frame() {
+      ticking = false;
+      var h = hero.offsetHeight;
+      var y = Math.min(scrollY, h);
+      bg.style.setProperty('--parallax', (y * 0.28) + 'px');
+    }
+
+    addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    }, { passive: true });
+
+    frame();
+  }
+
+  /* ── 본문 이미지 확대 보기 ─────────────────────────────────────────── */
+  function bindLightbox() {
+    var imgs = $$('#article img').filter(function (i) { return !i.closest('a'); });
+    if (!imgs.length) return;
+
+    var box = document.createElement('div');
+    box.className = 'lightbox';
+    box.innerHTML = '<img alt="">';
+    box.hidden = true;
+    document.body.appendChild(box);
+
+    var big = $('img', box);
+
+    function close() {
+      box.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    imgs.forEach(function (img) {
+      img.addEventListener('click', function () {
+        big.src = img.currentSrc || img.src;
+        big.alt = img.alt || '';
+        box.hidden = false;
+        requestAnimationFrame(function () { box.classList.add('is-open'); });
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    box.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  }
+
+  /* ── 상단 카테고리 메가 패널 ─────────────────────────────────────────
+     사이드바 카테고리(#category)를 읽어 상단바 트리거를 만듭니다.
+     티스토리 카테고리는 2단(대분류 > 소분류)이므로, 대분류가 트리거가
+     되고 소분류가 패널의 항목이 됩니다.
+
+     왜 서버 마크업을 또 심지 않고 복제하는가 —
+     [##_category_list_##] 를 두 번 쓰면 같은 id 가 두 벌 생기고,
+     접기 스크립트가 어느 쪽을 잡을지 알 수 없게 됩니다.            */
+  function buildMega() {
+    var nav = $('#topnav'), mega = $('#mega'), panel = $('#mega-panel');
+    var src = $('#category');
+    if (!nav || !mega || !panel || !src) return;
+
+    var roots = $$(':scope > ul > li', src);
+    if (!roots.length) return;
+
+    /* 카테고리 이름에서 글 수 뱃지를 떼어냅니다 */
+    function parse(a) {
+      if (!a) return null;
+      var cnt = a.querySelector('.c_cnt, .cnt_num, .num');
+      var n = cnt ? cnt.textContent.replace(/[^\d]/g, '') : '';
+      var clone = a.cloneNode(true);
+      $$('.c_cnt, .cnt_num, .num', clone).forEach(function (x) { x.remove(); });
+      return {
+        name: clone.textContent.replace(/\s+/g, ' ').trim(),
+        href: a.getAttribute('href') || '#',
+        count: n,
+        current: a.classList.contains('selected') || !!a.querySelector('.selected')
+      };
+    }
+
+    var groups = [];
+    roots.forEach(function (li) {
+      var top = parse(li.querySelector(':scope > a'));
+      if (!top || !top.name) return;
+      top.subs = $$(':scope > ul > li > a', li).map(parse).filter(Boolean);
+      groups.push(top);
+    });
+    if (!groups.length) return;
+
+    /* 트리거가 너무 많으면 상단바가 붐빕니다 — 5 개까지만 펼치고
+       나머지는 '더보기' 하나에 몰아 넣습니다. */
+    var MAX = 5;
+    var shown = groups.slice(0, MAX);
+    var restGroups = groups.slice(MAX);
+    if (restGroups.length) {
+      shown.push({ name: '더보기', href: '', subs: [], _rest: restGroups });
+    }
+
+    var openIdx = -1, hoverTimer = null;
+
+    function renderPanel(g) {
+      panel.innerHTML = '';
+
+      function section(title, href, items) {
+        var head = document.createElement('div');
+        head.className = 'mega__head';
+        var h = document.createElement('p');
+        h.className = 'mega__title';
+        h.textContent = title;
+        head.appendChild(h);
+        if (href) {
+          var all = document.createElement('a');
+          all.className = 'mega__all';
+          all.href = href;
+          all.textContent = '전체 보기 →';
+          head.appendChild(all);
+        }
+        panel.appendChild(head);
+
+        var grid = document.createElement('div');
+        grid.className = 'mega__grid';
+        items.forEach(function (it) {
+          var a = document.createElement('a');
+          a.className = 'mega__link' + (it.current ? ' is-current' : '');
+          a.href = it.href;
+          var label = document.createElement('span');
+          label.textContent = it.name;
+          a.appendChild(label);
+          if (it.count) {
+            var c = document.createElement('span');
+            c.className = 'mega__cnt';
+            c.textContent = it.count;
+            a.appendChild(c);
+          }
+          grid.appendChild(a);
+        });
+        panel.appendChild(grid);
+      }
+
+      if (g._rest) {
+        g._rest.forEach(function (sub) {
+          section(sub.name, sub.href, sub.subs.length ? sub.subs : [sub]);
+        });
+      } else {
+        section(g.name, g.href, g.subs);
+      }
+    }
+
+    function close() {
+      mega.classList.remove('is-open');
+      $$('.navitem', nav).forEach(function (b) {
+        b.classList.remove('is-open');
+        if (b.tagName === 'BUTTON') b.setAttribute('aria-expanded', 'false');
+      });
+      openIdx = -1;
+    }
+
+    function open(i, btn, g) {
+      if (openIdx === i) { close(); return; }
+      close();
+      renderPanel(g);
+      openIdx = i;
+      btn.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      mega.classList.add('is-open');
+    }
+
+    var frag = document.createDocumentFragment();
+    shown.forEach(function (g, i) {
+      /* 하위가 없는 대분류는 그냥 링크입니다 — 눌러도 빈 패널이 열리면
+         아무 일도 안 일어난 것처럼 보입니다. */
+      if (!g._rest && !g.subs.length) {
+        var a = document.createElement('a');
+        a.className = 'navitem';
+        a.href = g.href;
+        a.textContent = g.name;
+        frag.appendChild(a);
+        return;
+      }
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'navitem';
+      btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-controls', 'mega');
+      var label = document.createElement('span');
+      label.textContent = g.name;
+      btn.appendChild(label);
+      btn.insertAdjacentHTML('beforeend',
+        '<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-chevron"/></svg>');
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        open(i, btn, g);
+      });
+
+      /* 포인터가 있는 기기에서는 지나가기만 해도 열립니다.
+         다만 스치듯 지나갈 때 열리면 성가시므로 약간 뜸을 들입니다. */
+      if (matchMedia('(hover: hover)').matches) {
+        btn.addEventListener('mouseenter', function () {
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(function () {
+            if (openIdx !== -1 && openIdx !== i) open(i, btn, g);
+          }, 90);
+        });
+      }
+
+      frag.appendChild(btn);
+    });
+
+    nav.insertBefore(frag, nav.firstChild);
+
+    /* 패널 안이나 트리거 위가 아니면 닫습니다 */
+    document.addEventListener('click', function (e) {
+      if (!mega.contains(e.target) && !nav.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+    if (matchMedia('(hover: hover)').matches) {
+      [nav, mega].forEach(function (el) {
+        el.addEventListener('mouseleave', function () {
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(function () {
+            if (!nav.matches(':hover') && !mega.matches(':hover')) close();
+          }, 220);
+        });
+      });
+    }
+    addEventListener('scroll', function () {
+      if (openIdx !== -1) close();
+    }, { passive: true });
+  }
+
+  /* ── 가운데 자리: 어디에 있느냐에 따라 다른 이름 ─────────────────────
+     목록·홈에서는 블로그 이름, 글에서는 글 제목입니다.
+     상단바는 헤더라 글 블록 밖에 있어서 서버 치환자로는 구분할 수
+     없습니다. 그래서 렌더된 히어로 제목을 읽어 옮깁니다.           */
+  function bindBrand() {
+    var topbar = $('#topbar'), name = $('.topbar__name');
+    if (!topbar || !name) return;
+
+    var post = $('#permalink .hero__title') || $('.entry .hero__title');
+    if (!post) return;
+
+    var t = post.textContent.replace(/\s+/g, ' ').trim();
+    if (!t) return;
+
+    name.textContent = t;
+    name.title = t;
+    topbar.classList.add('topbar--post');
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     홈 — 첫 화면과 섹션
+
+     문구는 스킨 편집 → 스킨 옵션 → '홈 히어로' 에서 바꿉니다.
+     ══════════════════════════════════════════════════════════════════════ */
+  var HERO = {
+    /* 순환할 단어. 스킨 옵션의 '타이핑 단어'(쉼표로 구분)를 읽습니다.
+       비워두면 실제 카테고리에서 뽑아 씁니다. */
+    words: (function () {
+      var el = document.getElementById('hhero-type');
+      var raw = el ? (el.getAttribute('data-words') || '') : '';
+      return raw.split(',').map(function (w) { return w.trim(); })
+                .filter(function (w) { return w && w.indexOf('[##_') === -1; });
+    })(),
+
+    /* 카테고리도 못 읽으면 블로그 이름을 보여줍니다 */
+    fallback: function () {
+      var cfg = (typeof T !== 'undefined' && T && T.config && T.config.BLOG) ? T.config.BLOG : null;
+      var name = $('.topbar__name');
+      var t = (cfg && cfg.title) || (name && name.textContent) || '';
+      t = t.replace(/\s+/g, ' ').trim();
+      return t ? [t] : ['Blog'];
+    }
+  };
+
+  function isHome() {
+    return document.documentElement.classList.contains('is-home');
+  }
+
+  /* ── 타이핑 ──────────────────────────────────────────────────────────
+     라이브러리를 부르지 않습니다. 하는 일이 "한 글자씩 넣고 뺀다" 뿐이라
+     의존성 하나를 더 얹을 값어치가 없습니다.
+
+     setInterval 이 아니라 setTimeout 을 매번 다시 잡습니다. 그래야
+     글자마다 다른 속도를 줄 수 있고(사람이 치는 것처럼), 탭이 백그라운드로
+     가 있는 동안 타이머가 밀려 쌓이지 않습니다.                        */
+  function typeLoop(el, words) {
+    if (!el || !words.length) return;
+
+    /* 모션을 줄이기로 한 사람에게는 첫 단어만 가만히 보여줍니다 */
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = words[0];
+      return;
+    }
+
+    var w = 0, i = 0, deleting = false;
+
+    function step() {
+      var word = words[w % words.length];
+      i += deleting ? -1 : 1;
+      el.textContent = word.slice(0, i);
+
+      var wait;
+      if (!deleting && i === word.length) {
+        wait = 1600;            /* 다 쳤으면 잠깐 읽을 시간을 줍니다 */
+        deleting = true;
+      } else if (deleting && i === 0) {
+        wait = 320;
+        deleting = false;
+        w++;
+      } else {
+        /* 지울 때가 칠 때보다 빠릅니다 — 실제로도 그렇고, 기다림도 짧아집니다 */
+        wait = deleting ? 45 : 95 + Math.random() * 55;
+      }
+      setTimeout(step, wait);
+    }
+    step();
+  }
+
+  function buildHero() {
+    if (!isHome()) return;
+
+    var words = HERO.words.slice();
+    if (!words.length) {
+      /* 실제 카테고리에서 뽑습니다. 이러면 글이 늘어 카테고리가 바뀔 때
+         히어로도 저절로 따라옵니다 — 손으로 맞출 목록이 하나 줄어듭니다. */
+      words = $$('#category a')
+        .map(function (a) {
+          var c = a.cloneNode(true);
+          $$('.c_cnt, .cnt_num, .num', c).forEach(function (x) { x.remove(); });
+          return c.textContent.replace(/\s+/g, ' ').trim();
+        })
+        .filter(function (t) {
+          return t && t.length <= 16 && !/전체보기|분류/.test(t);
+        });
+      words = words.filter(function (t, i) { return words.indexOf(t) === i; }).slice(0, 8);
+    }
+    if (!words.length) words = HERO.fallback();
+
+    typeLoop($('#hhero-type'), words);
+  }
+
+  /* ── 홈 섹션 ─────────────────────────────────────────────────────────
+     순서에 이유가 있습니다.
+
+       ① 카테고리   이 블로그가 무엇을 다루는지 — 지도 먼저
+       ② 인기 글    남들이 무엇을 읽었는지 — 검증된 입구
+       ③ 태그       가볍게 훑을 거리
+       ④ 최근 댓글  사람이 있는 곳이라는 신호
+
+     전부 사이드바 데이터를 복제합니다. 서버 치환자를 한 번 더 심으면
+     같은 id 가 두 벌 생겨 접기·스파이 스크립트가 엉킵니다.           */
+  /* 섹션 머리 한 벌. 홈 섹션과 목록이 같은 것을 씁니다 —
+     같은 자리에 다른 모양이 서면 그때부터 홈이 전단지가 됩니다. */
+  function secHead(eyebrow, title, moreHref, moreText) {
+    var head = document.createElement('div');
+    head.className = 'hsec__head';
+
+    var box = document.createElement('div');
+    var e = document.createElement('p');
+    e.className = 'hsec__eyebrow';
+    e.textContent = eyebrow;
+    var h = document.createElement('h2');
+    h.className = 'hsec__title';
+    h.textContent = title;
+    box.appendChild(e);
+    box.appendChild(h);
+    head.appendChild(box);
+
+    if (moreHref) {
+      var m = document.createElement('a');
+      m.className = 'hsec__more';
+      m.href = moreHref;
+      var t = document.createElement('span');
+      t.textContent = moreText || '전체 보기';
+      var arrow = document.createElement('em');
+      arrow.textContent = '→';
+      m.appendChild(t);
+      m.appendChild(arrow);
+      head.appendChild(m);
+    }
+    return head;
+  }
+
+  /* 홈 목록에 몇 개까지 보일지.
+     0 이면 자르지 않습니다.
+
+     ⚠ 여기서 자르는 건 어디까지나 화면에서 덜어내는 것입니다.
+       서버가 한 페이지에 몇 개를 주는지는 티스토리 관리자
+       (블로그 → 글 목록 개수) 가 정합니다. 그 값이 8 인데 여기서 5 로
+       자르면, 2 페이지는 9 번째 글부터 시작해 6~8 번째가 건너뛰어집니다.
+       그래서 관리자 값도 같이 5 로 맞춰 주셔야 목록이 끊기지 않습니다.
+       (맞춰 두면 자를 게 없어져 이 설정은 무해하게 놀고 있습니다)
+
+     값은 스킨 옵션의 '홈 최신 글 개수' 에서 읽습니다. */
+  var HOME_POSTS = (function () {
+    var el = document.getElementById('homesections');
+    var n = el ? parseInt(el.getAttribute('data-home-posts'), 10) : NaN;
+    return isFinite(n) && n >= 0 ? n : 0;
+  })();
+
+  /* ── 구독자 수 ───────────────────────────────────────────────────────
+     스킨 옵션의 '구독자 수' 에 적으면 사이드바에 반영됩니다. 0 이나
+     빈 칸으로 두면 그 칸은 '글당 평균 조회' 로 되돌아갑니다.
+
+     ⚠ 왜 손으로 적나
+       구독자 수는 티스토리 '모바일웹' 에만 있습니다. 모바일웹은 우리
+       스킨이 아니라 티스토리가 따로 그리는 별도 페이지(/m)이고,
+       그 숫자는 /m/api/... 로 그때 받아옵니다. PC 스킨 쪽 스크립트
+       (index.js, common.js, base.js)에는 "구독자" 라는 글자가
+       단 한 번도 없습니다 — 구독 알약은 언제나 "구독하기" 뿐, 숫자를
+       달지 않습니다. 알약을 숨기든 뒤로 보내든 읽어낼 값이 없습니다.
+
+       구글이 아는 이유도 같습니다. 구글은 모바일 우선 색인이라
+       휴대폰인 척 크롤링해서 /m 을 받아 갑니다.
+
+     확인: 관리 → 통계, 또는 휴대폰으로 블로그 열기 */
+  var SUBSCRIBERS = (function () {
+    var el = document.getElementById('stats');
+    var n = el ? parseInt((el.getAttribute('data-subscribers') || '').replace(/[^\d]/g, ''), 10) : NaN;
+    return isFinite(n) && n > 0 ? n : 0;
+  })();
+
+  /* ── 홈 목록 손보기 ──────────────────────────────────────────────────
+     ① 목록 히어로("전체 글")는 풀스크린 히어로와 완전히 겹칩니다.
+        CSS 로 감췄으니(§35) 그 자리에 다른 섹션과 같은 머리를 넣습니다.
+     ② 글 수를 줄입니다 — 홈에서 목록은 맛보기지 본문이 아닙니다.
+     ③ 페이저를 목록 바로 밑으로 옮깁니다. 원래 자리는 카테고리·인기 글·
+        태그·댓글을 다 지난 맨 끝이라, 목록과 아무 상관 없어 보입니다.  */
+  function tidyHomeList() {
+    if (!isHome()) return;
+    /* 커버(<s_cover>)의 목록이 아니라 글 목록(<s_list>)만 — 커버는 .postlist 가 section 바로 아래입니다 */
+    var list = $('#main > section[data-view] > .wrap > .postlist');
+    if (!list) return;
+
+    if (!list.previousElementSibling) {
+      var head = secHead('Latest', '최신 글', '', '');
+      head.id = 'latest';
+      head.style.marginBottom = '1.5rem';
+      list.parentNode.insertBefore(head, list);
+    }
+
+    if (HOME_POSTS) {
+      $$(':scope > .post', list).forEach(function (p, i) {
+        if (i >= HOME_POSTS) p.remove();
+      });
+    }
+
+    var pager = $('.pager');
+    if (pager && pager.parentNode !== list.parentNode) {
+      list.parentNode.appendChild(pager);
+      pager.classList.add('pager--home');
+
+      /* 페이지를 넘겨도 목록에서 이어 보도록 표시를 남깁니다.
+         이 해시를 homeScroll() 이 읽습니다. */
+      $$('a[href]', pager).forEach(function (a) {
+        var h = a.getAttribute('href');
+        if (h && h.charAt(0) !== '#' && h.indexOf('#') === -1) {
+          a.setAttribute('href', h + '#latest');
+        }
+      });
+    }
+  }
+
+  /* ── 홈 스크롤 위치 ──────────────────────────────────────────────────
+     홈은 늘 맨 위에서 시작해야 합니다. 브라우저는 새로고침이나 뒤로가기
+     때 이전 위치를 되살리는데(scrollRestoration), 첫 화면을 통째로 쓰는
+     페이지에서는 그게 "중간부터 시작" 으로 보입니다.
+
+     다만 페이지를 넘겼을 때는 반대입니다. 목록을 보려고 누른 것이니
+     히어로를 다시 처음부터 보여줄 이유가 없습니다.
+
+     load 에서 한 번 더 잡는 이유 — 썸네일이 늦게 들어오면 그만큼
+     아래가 밀려서, DOM 준비 시점에 맞춘 위치가 어긋납니다.          */
+  function homeScroll() {
+    if (!isHome()) return;
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+    var paged = /[?&]page=(\d+)/.exec(location.search);
+    var toList = location.hash === '#latest' || (paged && +paged[1] > 1);
+
+    function go() {
+      var t = toList && $('#latest');
+      if (t) t.scrollIntoView();
+      else scrollTo(0, 0);
+    }
+
+    go();
+    addEventListener('load', go);
+  }
+
+  function buildHome() {
+    if (!isHome()) return;
+    var host = $('#homesections');
+    if (!host) return;
+
+    function sec(eyebrow, title, moreHref, moreText) {
+      var s = document.createElement('section');
+      s.className = 'hsec wrap wrap--wide reveal';
+      s.appendChild(secHead(eyebrow, title, moreHref, moreText));
+      host.appendChild(s);
+      return s;
+    }
+
+    function clean(a) {
+      var c = a.cloneNode(true);
+      $$('.c_cnt, .cnt_num, .num', c).forEach(function (x) { x.remove(); });
+      return c.textContent.replace(/\s+/g, ' ').trim();
+    }
+    function countOf(a) {
+      var n = a.querySelector('.c_cnt, .cnt_num, .num');
+      return n ? n.textContent.replace(/[^\d]/g, '') : '';
+    }
+
+    /* ① 카테고리 ------------------------------------------------------ */
+    (function () {
+      var src = $('#category');
+      if (!src) return;
+      var roots = $$(':scope > ul > li', src);
+      /* '분류 전체보기' 한 겹으로 감싸 오는 경우가 있습니다.
+         여기서는 지도를 그리는 게 목적이라 껍질을 벗겨야 뜻이 통합니다. */
+      if (roots.length === 1 && roots[0].querySelector(':scope > ul > li')) {
+        roots = $$(':scope > ul > li', roots[0]);
+      }
+      if (!roots.length) return;
+
+      var s = sec('Categories', '무엇을 쓰고 있나', src.querySelector('a') ? src.querySelector('a').getAttribute('href') : '', '전체 분류');
+      var grid = document.createElement('div');
+      grid.className = 'catgrid';
+
+      roots.forEach(function (li) {
+        var top = li.querySelector(':scope > a');
+        if (!top) return;
+
+        var card = document.createElement('a');
+        card.className = 'catcard pane';
+        card.href = top.getAttribute('href') || '#';
+
+        var head = document.createElement('div');
+        head.className = 'catcard__top';
+        var nm = document.createElement('span');
+        nm.className = 'catcard__name';
+        nm.textContent = clean(top);
+        head.appendChild(nm);
+        var n = countOf(top);
+        if (n) {
+          var c = document.createElement('span');
+          c.className = 'catcard__cnt';
+          c.textContent = n;
+          head.appendChild(c);
+        }
+        card.appendChild(head);
+
+        var subs = $$(':scope > ul > li > a', li);
+        if (subs.length) {
+          var wrap = document.createElement('div');
+          wrap.className = 'catcard__subs';
+          subs.slice(0, 5).forEach(function (a) {
+            var t = document.createElement('span');
+            t.textContent = clean(a);
+            wrap.appendChild(t);
+          });
+          if (subs.length > 5) {
+            var rest = document.createElement('span');
+            rest.className = 'catcard__rest';
+            rest.textContent = '+' + (subs.length - 5);
+            wrap.appendChild(rest);
+          }
+          card.appendChild(wrap);
+        }
+        grid.appendChild(card);
+      });
+
+      s.appendChild(grid);
+    })();
+
+    /* ② 인기 글 ------------------------------------------------------- */
+    (function () {
+      var block = $('.sidebar__block[data-section="popular"]') ||
+                  $$('.sidebar__block').filter(function (b) {
+                    var h = b.querySelector('.sidebar__label');
+                    return h && /인기|popular/i.test(h.textContent);
+                  })[0];
+      if (!block) return;
+      var items = $$('.slist__item a', block);
+      if (!items.length) return;
+
+      var s = sec('Popular', '많이 읽은 글', '', '');
+      var ol = document.createElement('ol');
+      ol.className = 'rank';
+
+      items.slice(0, 8).forEach(function (a, i) {
+        var li = document.createElement('li');
+        li.className = 'rank__item';
+        var link = document.createElement('a');
+        link.href = a.getAttribute('href') || '#';
+
+        var no = document.createElement('span');
+        no.className = 'rank__no';
+        no.textContent = i + 1;
+        link.appendChild(no);
+
+        var th = a.querySelector('.slist__thumb');
+        if (th) {
+          var img = document.createElement('img');
+          img.className = 'rank__thumb';
+          img.src = th.getAttribute('src');
+          img.alt = '';
+          img.loading = 'lazy';
+          link.appendChild(img);
+        }
+
+        var body = document.createElement('span');
+        body.className = 'rank__body';
+        var t = document.createElement('span');
+        t.className = 'rank__title clamp-2';
+        t.textContent = (a.querySelector('.slist__title') || a).textContent.trim();
+        body.appendChild(t);
+        var m = a.querySelector('.slist__meta');
+        if (m) {
+          var mm = document.createElement('span');
+          mm.className = 'rank__meta';
+          mm.textContent = m.textContent.trim();
+          body.appendChild(mm);
+        }
+        link.appendChild(body);
+        li.appendChild(link);
+        ol.appendChild(li);
+      });
+
+      s.appendChild(ol);
+    })();
+
+    /* ③ 태그 ---------------------------------------------------------- */
+    (function () {
+      var tags = $$('.taglist a');
+      if (!tags.length) return;
+
+      var s = sec('Tags', '흩어진 조각들', '/tag', '태그 클라우드');
+      var wall = document.createElement('div');
+      wall.className = 'tagwall';
+
+      tags.slice(0, 28).forEach(function (a) {
+        var c = document.createElement('a');
+        c.href = a.getAttribute('href') || '#';
+        c.insertAdjacentHTML('beforeend',
+          '<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-tag"/></svg>');
+        var t = document.createElement('span');
+        t.textContent = a.textContent.replace(/\s+/g, ' ').trim();
+        c.appendChild(t);
+        wall.appendChild(c);
+      });
+
+      s.appendChild(wall);
+    })();
+
+    /* ④ 최근 댓글 ----------------------------------------------------- */
+    (function () {
+      var block = $('.sidebar__block[data-section="comments"]') ||
+                  $$('.sidebar__block').filter(function (b) {
+                    var h = b.querySelector('.sidebar__label');
+                    return h && /댓글|comment/i.test(h.textContent);
+                  })[0];
+      if (!block) return;
+      var items = $$('.slist__item a', block);
+      if (!items.length) return;
+
+      var s = sec('Comments', '남겨주신 말들', '', '');
+      var wall = document.createElement('div');
+      wall.className = 'cwall';
+
+      items.slice(0, 6).forEach(function (a) {
+        var card = document.createElement('a');
+        card.className = 'cwall__item pane';
+        card.href = a.getAttribute('href') || '#';
+
+        var t = document.createElement('span');
+        t.className = 'cwall__text clamp-3';
+        t.textContent = (a.querySelector('.slist__title') || a).textContent.trim();
+        card.appendChild(t);
+
+        var m = a.querySelector('.slist__meta');
+        if (m) {
+          var mm = document.createElement('span');
+          mm.className = 'cwall__meta';
+          mm.textContent = m.textContent.trim();
+          card.appendChild(mm);
+        }
+        wall.appendChild(card);
+      });
+
+      s.appendChild(wall);
+    })();
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     커서 — 유성 하나
+
+     ⚠ 꼬리가 툭툭 끊기던 이유부터.
+
+       예전에는 mousemove 가 올 때마다 좌표를 쌓고, 그 점들을 선분으로
+       이었습니다. 문제는 두 가지였습니다.
+
+         ① mousemove 는 고르게 오지 않습니다. 빠르게 움직이면 점 사이가
+            수십 픽셀씩 벌어지고, 느리면 한 자리에 몰립니다. 그 점들을
+            그대로 이으면 마디가 눈에 보입니다.
+         ② 굵기를 '나이' 로 계산했는데, 점이 띄엄띄엄 들어오니 굵기도
+            계단처럼 변했습니다.
+
+       그래서 뒤집었습니다. 좌표는 이벤트가 아니라 프레임마다 한 번씩
+       기록합니다. 매 프레임 정확히 하나씩 쌓이므로 간격이 시간에 대해
+       균일해지고, 굵기는 나이가 아니라 배열 위치로 정합니다.
+
+       그리고 선분을 잇지 않습니다. 양쪽 가장자리를 계산해 하나의
+       도형으로 채웁니다. 붓으로 한 획 긋는 방식이라 이음매가 없습니다.
+     ══════════════════════════════════════════════════════════════════════ */
+  function bindCursor() {
+    if (!matchMedia('(pointer: fine)').matches) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var el = $('#cursor');
+    if (!el) return;
+    var beam = $('.cursor__beam', el);
+    var cv = $('#cursor-trail');
+    if (!cv) return;
+
+    var ctx = cv.getContext('2d');
+    if (!ctx) return;
+
+    document.documentElement.classList.add('has-cursor');
+
+    /* 화면 해상도를 따라가되 2배까지만. 3배 화면에서 전체 폭 캔버스를
+       매 프레임 지우면 그것만으로 프레임을 깎아먹습니다. */
+    var dpr = Math.min(devicePixelRatio || 1, 2);
+    function resize() {
+      cv.width = Math.round(innerWidth * dpr);
+      cv.height = Math.round(innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    addEventListener('resize', resize);
+
+    var N = 30;              /* 꼬리 마디 수 = 꼬리가 기억하는 프레임 수 */
+    var xs = new Float32Array(N);
+    var ys = new Float32Array(N);
+    var filled = false;
+
+    var mx = -200, my = -200;      /* 진짜 마우스 좌표 */
+    var dx = -0.707, dy = -0.707;  /* 진행 방향(부드럽게 따라감). 쉴 때는 왼쪽 위 */
+    var spd = 0;                   /* 속도(부드럽게 따라감) */
+    var seen = false, running = false, idle = 0;
+
+    var sparks = [];
+    var SPARK = ['170,205,255', '191,120,255', '255,255,255'];
+
+    function dark() { return document.documentElement.classList.contains('dark'); }
+
+    /* ── 한 획으로 그리는 꼬리 ────────────────────────────────────────
+       각 마디에서 진행 방향의 법선을 구해 양쪽으로 폭의 절반씩 벌리고,
+       한쪽 가장자리를 따라 갔다가 반대쪽으로 돌아오는 닫힌 도형을
+       만듭니다. 선분을 여러 개 긋는 것과 달리 이음매가 생기지 않고,
+       마디마다 폭을 달리 줄 수 있습니다.                            */
+    function tail(headW) {
+      if (!filled) return;
+
+      var L = [], R = [];
+      for (var i = 0; i < N; i++) {
+        var k = i / (N - 1);                 /* 0 = 꼬리 끝, 1 = 머리 */
+        var w = headW * k * k * 0.5;         /* 제곱으로 줄여 뾰족하게 */
+
+        var ax = xs[(i + N - 1) % N], ay = ys[(i + N - 1) % N];
+        var bx = xs[(i + 1) % N], by = ys[(i + 1) % N];
+        if (i === 0) { ax = xs[0]; ay = ys[0]; }
+        if (i === N - 1) { bx = xs[N - 1]; by = ys[N - 1]; }
+
+        var tx = bx - ax, ty = by - ay;
+        var len = Math.hypot(tx, ty) || 1;
+        var nx = -ty / len, ny = tx / len;   /* 법선 */
+
+        L.push(xs[i] + nx * w, ys[i] + ny * w);
+        R.push(xs[i] - nx * w, ys[i] - ny * w);
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(L[0], L[1]);
+      for (var a = 1; a < N; a++) ctx.lineTo(L[a * 2], L[a * 2 + 1]);
+      for (var b = N - 1; b >= 0; b--) ctx.lineTo(R[b * 2], R[b * 2 + 1]);
+      ctx.closePath();
+
+      var g = ctx.createLinearGradient(xs[0], ys[0], xs[N - 1], ys[N - 1]);
+      var op = dark() ? 1 : 0.5;
+      g.addColorStop(0.00, 'rgba(191,120,255,0)');
+      g.addColorStop(0.45, 'rgba(150,120,255,' + 0.30 * op + ')');
+      g.addColorStop(0.80, 'rgba(150,190,255,' + 0.62 * op + ')');
+      g.addColorStop(1.00, 'rgba(225,240,255,' + 0.85 * op + ')');
+      ctx.fillStyle = g;
+      ctx.fill();
+    }
+
+    /* ── 머리 ────────────────────────────────────────────────────────
+       꼭짓점 하나 + 뒤로 늘어나는 몸통. 빠를수록 길어집니다.
+       가만히 있으면 짧은 결정이 되어 왼쪽 위를 가리킵니다.          */
+    function head(len, wide, accent) {
+      var bx = -dx, by = -dy;              /* 몸통이 뻗는 쪽 = 진행 반대 */
+      var nx = -by, ny = bx;
+
+      var tipX = mx, tipY = my;
+      var backX = mx + bx * len, backY = my + by * len;
+      var midX = mx + bx * len * 0.34, midY = my + by * len * 0.34;
+
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.quadraticCurveTo(midX + nx * wide, midY + ny * wide, backX, backY);
+      ctx.quadraticCurveTo(midX - nx * wide, midY - ny * wide, tipX, tipY);
+      ctx.closePath();
+
+      var hg = ctx.createLinearGradient(tipX, tipY, backX, backY);
+      if (accent) {
+        hg.addColorStop(0, 'rgba(235,245,255,1)');
+        hg.addColorStop(0.5, 'rgba(90,170,255,0.95)');
+        hg.addColorStop(1, 'rgba(10,132,255,0)');
+      } else {
+        hg.addColorStop(0, 'rgba(255,255,255,1)');
+        hg.addColorStop(0.55, 'rgba(200,225,255,0.88)');
+        hg.addColorStop(1, 'rgba(160,190,255,0)');
+      }
+      ctx.fillStyle = hg;
+      ctx.fill();
+
+      /* 꼭짓점 잔광 — 이게 있어야 '빛나는 끝' 이 됩니다 */
+      var r = wide * 3.2;
+      var rg = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, r);
+      rg.addColorStop(0, 'rgba(255,255,255,' + (dark() ? 0.75 : 0.4) + ')');
+      rg.addColorStop(0.4, 'rgba(150,200,255,' + (dark() ? 0.30 : 0.16) + ')');
+      rg.addColorStop(1, 'rgba(150,200,255,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(tipX, tipY, r, 0, 6.2832);
+      ctx.fill();
+    }
+
+    function frame() {
+      /* ── 방향과 속도를 부드럽게 따라갑니다 ──
+         순간 속도를 그대로 쓰면 손이 떨릴 때마다 머리가 홱홱 돕니다. */
+      var px = filled ? xs[N - 1] : mx;
+      var py = filled ? ys[N - 1] : my;
+      var vx = mx - px, vy = my - py;
+      var v = Math.hypot(vx, vy);
+
+      spd += (v - spd) * 0.22;
+
+      if (v > 0.6) {
+        var ux = vx / v, uy = vy / v;
+        dx += (ux - dx) * 0.28;
+        dy += (uy - dy) * 0.28;
+      } else {
+        /* 멈추면 왼쪽 위로 되돌아옵니다 — 화살표가 쉬는 자세 */
+        dx += (-0.707 - dx) * 0.06;
+        dy += (-0.707 - dy) * 0.06;
+      }
+      var dl = Math.hypot(dx, dy) || 1;
+      dx /= dl; dy /= dl;
+
+      /* ── 좌표는 프레임마다 정확히 하나씩 ──
+         이벤트마다 쌓지 않는 이유가 여기 있습니다. 간격이 균일해야
+         꼬리 굵기가 계단이 아니라 곡선으로 줄어듭니다. */
+      for (var i = 0; i < N - 1; i++) { xs[i] = xs[i + 1]; ys[i] = ys[i + 1]; }
+      xs[N - 1] = mx; ys[N - 1] = my;
+      if (!filled) {
+        for (var j = 0; j < N; j++) { xs[j] = mx; ys[j] = my; }
+        filled = true;
+      }
+
+      var link = el.classList.contains('is-link');
+      var down = el.classList.contains('is-down');
+      var text = el.classList.contains('is-text');
+
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+      if (!text) {
+        ctx.globalCompositeOperation = dark() ? 'lighter' : 'source-over';
+
+        var boost = link ? 1.35 : 1;
+        var shrink = down ? 0.78 : 1;
+        tail(Math.min(9, 2.6 + spd * 0.28) * boost * shrink);
+        head(
+          (13 + Math.min(26, spd * 1.15)) * boost * shrink,
+          (4.6 + Math.min(2.4, spd * 0.06)) * boost * shrink,
+          link
+        );
+
+        /* ── 불티 ── */
+        for (var s2 = sparks.length - 1; s2 >= 0; s2--) {
+          var sp = sparks[s2];
+          sp.age += 1 / 60;
+          if (sp.age >= sp.life) { sparks.splice(s2, 1); continue; }
+          sp.x += sp.vx; sp.y += sp.vy; sp.vy += 0.03;
+          var f = 1 - sp.age / sp.life;
+          ctx.fillStyle = 'rgba(' + sp.c + ',' + (f * (dark() ? 0.9 : 0.45)) + ')';
+          ctx.beginPath();
+          ctx.arc(sp.x, sp.y, sp.r * f, 0, 6.2832);
+          ctx.fill();
+        }
+
+        /* 빠르게 움직일 때만 불티가 튑니다. 천천히 움직이는데 계속
+           튀면 유성이 아니라 지저분한 반짝이가 됩니다. */
+        if (spd > 12 && sparks.length < 30 && Math.random() < 0.7) {
+          var ang = Math.atan2(-dy, -dx) + (Math.random() - 0.5) * 1.2;
+          var sv = 0.4 + Math.random() * 1.5;
+          sparks.push({
+            x: mx, y: my,
+            vx: Math.cos(ang) * sv, vy: Math.sin(ang) * sv,
+            r: 0.7 + Math.random() * 1.6,
+            age: 0, life: 0.4 + Math.random() * 0.4,
+            c: SPARK[(Math.random() * SPARK.length) | 0]
+          });
+        }
+
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      /* 멈춰 있고 꼬리도 사그라들었으면 루프를 놓습니다.
+         가만히 있는 동안 매 프레임 빈 캔버스를 지울 이유가 없습니다. */
+      if (v < 0.2 && spd < 0.4 && !sparks.length) idle++;
+      else idle = 0;
+
+      if (idle > 90) { running = false; return; }
+      requestAnimationFrame(frame);
+    }
+
+    function wake() {
+      idle = 0;
+      if (running) return;
+      running = true;
+      requestAnimationFrame(frame);
+    }
+
+    addEventListener('mousemove', function (e) {
+      mx = e.clientX;
+      my = e.clientY;
+      if (beam) beam.style.translate = mx + 'px ' + my + 'px';
+
+      if (!seen) {
+        seen = true;
+        filled = false;          /* 첫 좌표에서 화면을 가로지르지 않도록 */
+        el.classList.add('is-on');
+      }
+      wake();
+    }, { passive: true });
+
+    /* 창 밖으로 나가면 숨깁니다 — 브라우저 UI 위에 유령이 남지 않게 */
+    function hide() { el.classList.remove('is-on'); filled = false; }
+    document.addEventListener('mouseleave', hide);
+    addEventListener('blur', hide);
+    document.addEventListener('mouseenter', function () { if (seen) el.classList.add('is-on'); });
+
+    var LINK = 'a,button,label[for],summary,[role="button"],.navitem,.chip,.code__dot,select';
+    var TEXT = 'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]),textarea,[contenteditable="true"]';
+
+    document.addEventListener('mouseover', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+      var isText = !!t.closest(TEXT);
+      el.classList.toggle('is-text', isText);
+      el.classList.toggle('is-link', !isText && !!t.closest(LINK));
+      wake();
+    }, { passive: true });
+
+    addEventListener('mousedown', function () { el.classList.add('is-down'); wake(); }, { passive: true });
+    addEventListener('mouseup', function () { el.classList.remove('is-down'); wake(); }, { passive: true });
+  }
+
+  /* ── 티스토리가 심는 구독 알약 걷어내기 ──────────────────────────────
+     화면 왼쪽 아래에 "○○ 구독하기" 가 따로 뜹니다. 우리 토스트와
+     같은 말을 두 번 하는 셈이고, 위치도 사이드바를 가립니다.
+
+     이름을 짐작하지 않습니다. 티스토리가 이 위젯의 클래스를 여러 번
+     바꿔 왔고, 그때마다 선택자를 다시 맞추는 건 지는 싸움입니다.
+     대신 성질로 찾습니다 — 화면에 고정돼 있고, 글자가 아주 짧고,
+     거기에 '구독' 이 들어 있는 것. 우리 것은 이름으로 제외합니다. */
+  function hideTistorySub() {
+    var MINE = ['#subtoast', '#shell', '#cursor', '#dock', '#topbar', '#liquid'];
+
+    function isMine(el) {
+      for (var i = 0; i < MINE.length; i++) {
+        var m = document.querySelector(MINE[i]);
+        if (m && (m === el || m.contains(el) || el.contains(m))) return true;
+      }
+      return false;
+    }
+
+    /* 이름을 아는 것부터 */
+    var KNOWN = '#tistorySubscribeBox, .box_subscription, .subscribe_box, .tt_subscribe, .wrap_subscription';
+
+    function sweep() {
+      $$(KNOWN).forEach(function (el) {
+        if (el.dataset.lucidHidden || isMine(el)) return;
+        el.dataset.lucidHidden = '1';
+        el.style.setProperty('display', 'none', 'important');
+      });
+
+      /* 티스토리가 body 바로 아래에 띄우는 위젯만 봅니다. 본문(#shell) 안이나
+         사용자 위젯까지 글자로 훑으면 '구독' 이 들어간 엉뚱한 것이 사라집니다. */
+      $$('body > div, body > aside, body > section').forEach(function (el) {
+        if (el.dataset.lucidHidden || isMine(el)) return;
+        if (getComputedStyle(el).position !== 'fixed') return;
+
+        var txt = (el.textContent || '').replace(/\s+/g, '');
+        /* 글자가 길면 그건 위젯이 아니라 그 위젯을 담은 큰 상자입니다 */
+        if (!txt || txt.length > 24 || txt.indexOf('구독') === -1) return;
+
+        el.dataset.lucidHidden = '1';
+        el.style.setProperty('display', 'none', 'important');
+      });
+    }
+
+    sweep();
+    /* 늦게 그려지는 위젯이라 잠깐 지켜봅니다 */
+    var mo = new MutationObserver(sweep);
+    mo.observe(document.body, { childList: true, subtree: true });
+    setTimeout(function () { mo.disconnect(); }, 10000);
+  }
+
+  /* ── 구독 토스트 ─────────────────────────────────────────────────────
+     띄우기 전에 확인하는 것.
+
+       ① 24시간 안에 "오늘은 그만" 을 눌렀는가
+       ② 구독이라는 게 가능한 곳인가 — 주인 계정이거나 티스토리 도메인이
+          아니면 상단 구독 버튼 자체가 숨어 있습니다. 그걸 그대로 신호로
+          씁니다
+       ③ 이미 구독 중인가 — 구독한 사람에게 또 권하지 않습니다
+
+     닫는 방법이 두 가지인 이유 —
+       ✕        지금 이 화면에서만 치웁니다. 새 창에서는 다시 뜹니다.
+                "방금은 방해였다" 와 "다시는 보지 말자" 는 다른 말입니다.
+       오늘은 그만  24시간 동안 묻지 않습니다.
+
+     구독 동작은 상단 버튼에게 넘깁니다. 티스토리가 붙여놓은 처리를
+     여기서 흉내 내면 저쪽이 바뀔 때마다 같이 깨집니다.               */
+  function bindSubToast() {
+    var box = $('#subtoast');
+    if (!box) return;
+
+    var KEY = 'lucid-sub-mute';
+    var DAY = 24 * 60 * 60 * 1000;
+
+    function close() {
+      box.classList.remove('is-open');
+      setTimeout(function () { box.hidden = true; }, 400);
+    }
+
+    function mute() {
+      try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
+      close();
+    }
+
+    try {
+      var t = parseInt(localStorage.getItem(KEY), 10);
+      if (t && Date.now() - t < DAY) return;
+    } catch (e) {}
+
+    var real = $('#subscribe-btn');
+    if (!real || real.hidden || real.classList.contains('is-on')) return;
+
+    /* ✕ 는 기억하지 않습니다 — 이번 화면에서만 물러납니다 */
+    $('#subtoast-close').addEventListener('click', close);
+
+    /* 이쪽만 24시간을 재웁니다 */
+    $('#subtoast-later').addEventListener('click', mute);
+
+    $('#subtoast-sub').addEventListener('click', function () {
+      real.click();
+      mute();
+    });
+
+    /* 화면이 자리를 잡은 뒤에 올라옵니다.
+       들어오자마자 들이대면 글을 읽기도 전에 닫힙니다. */
+    setTimeout(function () {
+      box.hidden = false;
+      requestAnimationFrame(function () { box.classList.add('is-open'); });
+    }, 2600);
+  }
+
+  /* ── 방문 지표 ───────────────────────────────────────────────────────
+     티스토리가 스킨에 주는 값은 방문 수 셋(전체·오늘·어제)뿐입니다.
+     구독자 수는 없습니다 — T.config.SUBSCRIPTION 은 "내가 이 블로그를
+     구독했는가" 만 담고 있어서 총 구독자를 알 방법이 없습니다.
+
+     그래서 있는 셋으로 만들 수 있는 걸 만듭니다.
+       · 어제 대비 증감
+       · 어제를 100 으로 놓은 막대
+       · 글 수(카테고리에서 읽음)와 글당 평균 조회수                */
+  function buildStats() {
+    var box = $('#stats');
+    if (!box) return;
+
+    function num(el) {
+      if (!el) return NaN;
+      return parseInt((el.textContent || '').replace(/[^\d]/g, ''), 10);
+    }
+
+    var today = num($('#stats-today'));
+    var yest  = num($('#stats-yest'));
+    var total = num($('#stats-total'));
+    if (!isFinite(today) || !isFinite(yest)) return;
+
+    /* 글 수는 카테고리 루트의 "분류 전체보기 (134)" 에서 가져옵니다.
+       스킨에 글 수 치환자가 따로 없어서 이게 유일한 출처입니다. */
+    var root = $('#category a');
+    var cnt = root && root.querySelector('.c_cnt, .cnt_num, .num');
+    var posts = cnt ? parseInt(cnt.textContent.replace(/[^\d]/g, ''), 10)
+              : root ? parseInt((root.textContent.match(/\((\d[\d,]*)\)/) || [])[1] || '', 10) : NaN;
+
+    var fmt = function (n) { return n.toLocaleString('ko-KR'); };
+
+    if (isFinite(posts) && posts > 0) $('#stats-posts').textContent = fmt(posts);
+
+    /* ── 세 번째 칸 ──
+       구독자 수가 적혀 있으면 그걸 씁니다. 사람 수는 조회수와 달리
+       "다음 글을 기다리는 사람" 을 세는 숫자라 셋 중 제일 할 말이
+       많습니다.
+
+       비워 두면 글당 평균 조회로 돌아갑니다. 방문자와 글 수는 각각
+       규모만 말하는데, 둘을 나눈 값은 "글 하나가 얼마나 읽히는가"
+       라는 다른 이야기를 합니다. 세 칸이 한 문장이 됩니다 —
+       "N편이 M번 읽혔고, 한 편당 M/N번." */
+    var cell = $('#stats-avg-cell');
+    var val  = $('#stats-avg');
+    var cap  = cell ? cell.querySelector('span') : null;
+
+    if (typeof SUBSCRIBERS === 'number' && SUBSCRIBERS > 0) {
+      val.textContent = fmt(SUBSCRIBERS);
+      if (cap) cap.textContent = '구독자';
+      if (cell) cell.title = SUBSCRIBERS + '명이 이 블로그를 구독하고 있습니다';
+
+    } else if (isFinite(posts) && posts > 0 && isFinite(total)) {
+      var avg = Math.round(total / posts);
+      val.textContent = fmt(avg);
+      if (cap) cap.textContent = '글당';
+      if (cell) cell.title = '글 하나가 평균 ' + fmt(avg) + '번 읽혔습니다';
+
+    } else if (cell) {
+      /* 셋 다 못 구하면 빈 칸을 남기느니 두 칸으로 줄입니다 */
+      cell.remove();
+      $('#stats-grid').style.gridTemplateColumns = 'repeat(2, 1fr)';
+    }
+
+    /* ── 막대 — 어제를 100 으로 ── */
+    var fill = $('#stats-fill');
+    var ratio = yest > 0 ? today / yest : (today > 0 ? 1 : 0);
+    if (fill) {
+      requestAnimationFrame(function () {
+        fill.style.width = Math.min(100, Math.round(ratio * 100)) + '%';
+      });
+      $('.stats__bar', box).classList.toggle('is-over', ratio >= 1 && today > 0);
+    }
+
+    /* ── 어제 대비 ──
+       ⚠ 하루가 얼마 안 지났을 때 그대로 비교하면 매일 아침 ▼-100% 가
+         뜹니다. 사실이긴 하지만 아무 뜻이 없는 사실입니다. 자정부터
+         몇 %가 지났는지 재서, 20% (오전 5시경) 를 넘긴 뒤에만 증감을
+         말합니다. 그 전에는 "집계 중" 입니다. */
+    var badge = $('#stats-delta');
+    if (!badge) return;
+
+    var now = new Date();
+    var passed = (now.getHours() * 60 + now.getMinutes()) / 1440;
+
+    if (passed < 0.2 || yest === 0) {
+      badge.textContent = '집계 중';
+      badge.classList.add('is-ready');
+      return;
+    }
+
+    var diff = today - yest;
+    var pct = Math.round((diff / yest) * 100);
+    badge.textContent = (diff > 0 ? '▲ ' : diff < 0 ? '▼ ' : '· ') + Math.abs(pct) + '%';
+    badge.classList.add('is-ready');
+    badge.classList.toggle('is-up', diff > 0);
+    badge.classList.toggle('is-down', diff < 0);
+    badge.title = '어제 같은 날 전체 ' + fmt(yest) + '명 대비';
+  }
+
+  /* ── Page 드롭다운 ───────────────────────────────────────────────────
+     블로그 메뉴(홈·태그·방명록·공지사항·깃허브…)를 하나로 접습니다.
+     서버 마크업을 그대로 두고 복제해서 채웁니다 — 원본을 옮기면
+     티스토리가 심어놓은 클래스나 스크립트가 같이 끌려갑니다.       */
+  function bindPages() {
+    var wrap = $('#toppages'), btn = $('#pages-btn'), menu = $('#pagemenu');
+    if (!wrap || !btn || !menu) return;
+
+    var src = $('.topbar__menusrc', menu);
+    var links = src ? $$('a', src) : [];
+    if (!links.length) { wrap.hidden = true; return; }
+
+    links.forEach(function (a) {
+      var c = document.createElement('a');
+      c.href = a.getAttribute('href') || '#';
+      c.textContent = a.textContent.replace(/\s+/g, ' ').trim();
+      if (a.classList.contains('selected') || a.parentElement.classList.contains('selected')) {
+        c.classList.add('is-current');
+      }
+      menu.appendChild(c);
+    });
+    if (src) src.remove();
+
+    function set(on) {
+      menu.classList.toggle('is-open', on);
+      btn.classList.toggle('is-open', on);
+      btn.setAttribute('aria-expanded', String(on));
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      set(!menu.classList.contains('is-open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!wrap.contains(e.target)) set(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') set(false);
+    });
+    addEventListener('scroll', function () { set(false); }, { passive: true });
+  }
+
+  /* ── 검색 팝업 ───────────────────────────────────────────────────────
+     빈 검색창은 사용자에게 아무것도 주지 않습니다. 사이드바의 랜덤
+     태그를 복제해 아래에 깔아두면, 무엇을 칠지 정하지 않은 사람도
+     한 번의 클릭으로 어딘가에 도착합니다.                            */
+  function bindSearch() {
+    var pop = $('#searchpop'), btn = $('#search-btn');
+    var cancel = $('#search-cancel'), input = $('#search'), box = $('#searchpop-tags');
+    if (!pop || !btn) return;
+
+    if (box) {
+      var tags = $$('.taglist a, .tagcloud a');
+      if (!tags.length) {
+        var more = $('.searchpop__more');
+        if (more) more.style.marginBottom = '0';
+      }
+      tags.slice(0, 40).forEach(function (a) {
+        var c = document.createElement('a');
+        c.href = a.getAttribute('href') || '#';
+        c.insertAdjacentHTML('beforeend',
+          '<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-tag"/></svg>');
+        var t = document.createElement('span');
+        t.textContent = a.textContent.replace(/\s+/g, ' ').trim();
+        c.appendChild(t);
+        box.appendChild(c);
+      });
+    }
+
+    var lastFocus = null;
+
+    function set(on) {
+      pop.classList.toggle('is-open', on);
+      btn.setAttribute('aria-expanded', String(on));
+      document.body.style.overflow = on ? 'hidden' : '';
+      if (on) {
+        lastFocus = document.activeElement;
+        /* 패널이 자리를 잡은 뒤에 포커스를 줍니다.
+           바로 주면 스크롤 위치가 애니메이션 도중 값으로 튑니다. */
+        setTimeout(function () { if (input) input.focus(); }, 60);
+      } else if (lastFocus) {
+        lastFocus.focus();
+      }
+    }
+
+    btn.addEventListener('click', function () { set(true); });
+    if (cancel) cancel.addEventListener('click', function () { set(false); });
+
+    /* 바깥(스크림)을 누르면 닫힙니다 — 패널 안은 그대로 둡니다 */
+    pop.addEventListener('click', function (e) {
+      if (!e.target.closest('.searchpop__panel')) set(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && pop.classList.contains('is-open')) { set(false); return; }
+
+      /* ⌘K / Ctrl+K, 그리고 입력 중이 아닐 때의 "/" */
+      var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) ||
+                   document.activeElement.isContentEditable;
+      if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault(); set(true);
+      } else if (e.key === '/' && !typing) {
+        e.preventDefault(); set(true);
+      }
+    });
+  }
+
+  /* ── 티스토리가 심는 버튼 걷어내기 ───────────────────────────────────
+     스킨 밖에서 주입되므로 마크업으로는 잡히지 않습니다. 이름이
+     버전마다 조금씩 달라 정확한 선택자 대신 패턴으로 훑습니다.
+     구독 버튼(.btn_subscription)은 우리가 쓰고 있으니 건드리지 않습니다. */
+  function sweepTistory() {
+    /* 이름이 확실한 것들은 선택자로 바로 잡습니다.
+       #menubar_wrapper 는 로그인한 본인에게만 뜨는 관리 메뉴라
+       방문자 화면에는 없지만, 정작 스킨을 손보는 사람은 늘 보게 됩니다. */
+    /* 관리자 메뉴바(글쓰기·관리)는 스킨 옵션 '관리자 메뉴바 숨기기' 를 켠
+       블로그에서만 걷어냅니다. 기본은 두는 쪽입니다 — 남의 블로그에서
+       관리 메뉴가 사라지면 그건 스킨 버그로 보입니다. */
+    var shell = document.getElementById('shell');
+    var hideMenubar = !!shell && shell.getAttribute('data-hide-menubar') === 'true';
+
+    var KNOWN = '#tistorytoolbarid, #tistoryToolbar, .tistory_toolbar, #tt-toolbar' +
+                (hideMenubar ? ', #menubar_wrapper, [data-tistory-react-app="Menubar"]' : '');
+    var PATTERN = hideMenubar
+      ? /tistorytoolbar|tistory[-_]?tool|tt[-_]toolbar|menubar_wrapper/
+      : /tistorytoolbar|tistory[-_]?tool|tt[-_]toolbar/;
+
+    function sweep() {
+      $$(KNOWN).forEach(function (el) { el.remove(); });
+
+      /* 이름이 버전마다 흔들리는 것들은 패턴으로 한 번 더 훑습니다 */
+      $$('body > div, body > aside, body > iframe').forEach(function (el) {
+        if (el.closest('#shell')) return;
+        var key = ((el.id || '') + ' ' + (el.className || '')).toLowerCase();
+        if (PATTERN.test(key)) el.remove();
+      });
+    }
+    sweep();
+    /* 늦게 주입되는 경우가 있어 잠깐 지켜봅니다 */
+    var mo = new MutationObserver(sweep);
+    mo.observe(document.body, { childList: true });
+    setTimeout(function () { mo.disconnect(); }, 8000);
+  }
+
+  /* ── 표 감싸기 ───────────────────────────────────────────────────────
+     좁은 화면에서 표를 가로로 밀어 보려면 스크롤 상자가 필요합니다.
+     그 역할을 표 자신에게 시키면(display:block) 열이 남는 폭을 나눠
+     갖지 못해 오른쪽이 빕니다. 그래서 상자를 따로 씌웁니다.        */
+  function wrapTables() {
+    $$('#article table').forEach(function (t) {
+      if (t.parentElement.classList.contains('tablewrap')) return;
+      var box = document.createElement('div');
+      box.className = 'tablewrap';
+      t.parentNode.insertBefore(box, t);
+      box.appendChild(t);
+    });
+  }
+
+  /* ── 도크 접기 / 펼치기 ──────────────────────────────────────────────
+     버튼 세 개가 늘 떠 있으면 그만큼 콘텐츠를 가립니다.
+     평소엔 하나로 접어두고, 필요할 때만 펼칩니다.                      */
+  function bindDock() {
+    var dock = $('#dock'), handle = $('#dock-handle');
+    if (!dock || !handle) return;
+
+    function setOpen(on) {
+      dock.classList.toggle('is-open', on);
+      handle.setAttribute('aria-expanded', String(on));
+      if (!on) {
+        var pop = $('#appearance'), popBtn = $('#appearance-btn');
+        if (pop) { pop.classList.remove('is-open'); }
+        if (popBtn) { popBtn.classList.remove('is-active'); popBtn.setAttribute('aria-expanded', 'false'); }
+      }
+    }
+
+    handle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!dock.classList.contains('is-open'));
+    });
+
+    /* 바깥을 누르면 접힙니다 */
+    document.addEventListener('click', function (e) {
+      if (!dock.contains(e.target)) setOpen(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  }
+
+  /* ── 부팅 ──────────────────────────────────────────────────────────── */
+  /* 한 단계가 넘어져도 나머지는 계속 서 있게 합니다 */
+  function step(name, fn) {
+    try {
+      fn();
+    } catch (e) {
+      console.warn('[lucid] ' + name + ' 실패:', e);
+    }
+  }
+
+  function boot() {
+    /* 사용자 조작에 직결되는 것부터 */
+    step('theme', function () {
+      applyTheme(lsGet('lucid-theme') || window.LUCID.theme);
+      bindTheme();
+    });
+    step('clarity', bindClarity);
+    step('dock', bindDock);
+    step('mega', buildMega);
+    step('hero', buildHero);
+    step('home', buildHome);
+    step('homelist', tidyHomeList);
+    step('homescroll', homeScroll);
+    step('brand', bindBrand);
+    step('pages', bindPages);
+    step('search', bindSearch);
+    step('tistory', sweepTistory);
+    step('overlays', bindOverlays);
+
+    /* 나머지는 부가 기능 */
+    step('scroll', bindScroll);
+    step('cleanArticle', cleanArticle);
+    step('toc', buildToc);
+    step('highlight', highlightCode);
+    step('tables', wrapTables);
+    step('code', enhanceCode);
+    step('tags', styleTags);
+    step('stripInjected', stripInjected);
+    step('category', bindCategory);
+    step('stats', buildStats);
+    step('owner', function () { whenComments(markOwnerComments); });
+    step('replies', function () { whenComments(bindReplies); });
+    step('reveal', bindReveal);
+    step('subscribe', bindSubscribe);
+    step('subtoast', bindSubToast);
+    step('tistorySub', hideTistorySub);
+    step('cursor', bindCursor);
+    step('specular', bindSpecular);
+    step('parallax', bindParallax);
+    step('lightbox', bindLightbox);
+    step('segment', moveSegment);
+
+    hideLoader();
+  }
+
+  /* ── 로더 걷어내기 ───────────────────────────────────────────────────
+     CSS 전환에만 기대지 않습니다. 환경에 따라 전환이 시작조차 못 하고
+     로더가 화면을 계속 덮는 경우가 있었습니다. 클래스는 그대로 붙여
+     사라지는 모습을 살리되, 잠시 뒤 요소를 DOM 에서 아예 뺍니다.
+     없는 요소는 어떤 상태로도 화면을 덮을 수 없습니다.
+
+     부르는 곳은 셋입니다(부팅 끝 · load · 3초 타이머). 로더가 남는 건
+     '조금 덜 예쁜' 정도가 아니라 글을 아예 못 읽는 상태라, 한 경로가
+     막혀도 다른 데서 걷어내야 합니다. 다른 스크립트에서도 쓰도록
+     window.LUCID 에 올려 둡니다.                                       */
+  function hideLoader() {
+    var loader = $('#boot');
+    if (!loader || loader.dataset.gone) return;
+    loader.dataset.gone = '1';
+    loader.classList.add('is-done');
+    setTimeout(function () { loader.remove(); }, 420);
+  }
+  window.LUCID = window.LUCID || {};
+  window.LUCID.hideLoader = hideLoader;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Liquid Glass 굴절 엔진
+
+     backdrop-filter 에 SVG feDisplacementMap 을 물려 '진짜 유리' 를 만듭니다.
+     요소마다 크기·모서리가 다르므로 변위 맵도 요소마다 만들어야 합니다.
+     같은 규격은 필터를 공유하고, 크기가 바뀌면 ResizeObserver 로 다시 만듭니다.
+
+     Chromium 계열에서만 backdrop-filter: url() 이 동작합니다.
+     그 외 브라우저는 이 스크립트가 아무것도 하지 않고,
+     기존 frosted glass 가 그대로 남습니다.
+     ═══════════════════════════════════════════════════════════════════════ */
+<script>
+(function () {
+  'use strict';
+
+  if (!window.CSS || !CSS.supports || !CSS.supports('backdrop-filter', 'url(#x)')) return;
+  if (matchMedia('(prefers-reduced-transparency: reduce)').matches) return;
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var defs = null;
+  var cache = Object.create(null);
+  var seq = 0;
+
+  function host() {
+    if (defs) return defs;
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('width', '0');
+    svg.setAttribute('height', '0');
+    svg.style.cssText = 'position:absolute;width:0;height:0;pointer-events:none';
+    defs = document.createElementNS(NS, 'defs');
+    svg.appendChild(defs);
+    document.body.appendChild(svg);
+    return defs;
+  }
+
+  /* ── 변위 맵을 굽습니다 ────────────────────────────────────────────
+     R = 가로 변위, G = 세로 변위, 128 = 굴절 없음.
+
+     예전에는 좌우/상하 선형 그라디언트를 겹쳐 만들었습니다. 그런데 그건
+     둥근 모서리에서 방향이 틀립니다. 좌측 가장자리는 가로로만, 상단은
+     세로로만 미는데, 모서리에서는 대각선으로 꺾여야 하거든요.
+
+     그래서 물리를 따릅니다.
+       ① 둥근 사각형의 부호 거리장(SDF)을 구하고
+       ② 그 기울기에서 실제 표면 법선을 뽑고
+       ③ 렌즈 단면(원호)의 기울기로 굴절 세기를 구합니다
+     WebGL 셰이더가 매 프레임 하는 계산을 이미지로 한 번만 구워두는 것과
+     같습니다. 결과는 거의 동일한데, backdrop-filter 라서 뒤로 지나가는
+     본문 콘텐츠까지 그대로 굴절합니다.                                  */
+
+  function sdRoundRect(px, py, w, h, r) {
+    var qx = Math.abs(px - w / 2) - (w / 2 - r);
+    var qy = Math.abs(py - h / 2) - (h / 2 - r);
+    var ax = Math.max(qx, 0), ay = Math.max(qy, 0);
+    return Math.hypot(ax, ay) + Math.min(Math.max(qx, qy), 0) - r;
+  }
+
+  function mapURI(w, h, r, edge) {
+    /* 맵은 부드러운 장이라 축소해 구워도 결과가 같습니다.
+       feImage 가 preserveAspectRatio="none" 으로 늘려 씁니다. */
+    var S = Math.min(1, 320 / Math.max(w, h));
+    var W = Math.max(8, Math.round(w * S));
+    var H = Math.max(8, Math.round(h * S));
+    var R = Math.min(r * S, Math.min(W, H) / 2);
+    var E = Math.max(2, edge * S);
+
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var ctx = cv.getContext('2d');
+    var img = ctx.createImageData(W, H);
+    var d = img.data;
+
+    for (var y = 0; y < H; y++) {
+      for (var x = 0; x < W; x++) {
+        var i = (y * W + x) * 4;
+        var dx = 0, dy = 0;
+        var px = x + 0.5, py = y + 0.5;
+        var s0 = sdRoundRect(px, py, W, H, R);
+
+        /* 가장자리 안쪽 E 픽셀 구간에서만 굴절합니다 */
+        if (s0 < 0 && s0 > -E) {
+          var gx = sdRoundRect(px + 1, py, W, H, R) - sdRoundRect(px - 1, py, W, H, R);
+          var gy = sdRoundRect(px, py + 1, W, H, R) - sdRoundRect(px, py - 1, W, H, R);
+          var gl = Math.hypot(gx, gy) || 1;
+          gx /= gl; gy /= gl;
+
+          var t = 1 + s0 / E;                                   /* 안쪽 0 → 가장자리 1 */
+          var slope = t / Math.sqrt(Math.max(1e-4, 1 - t * t)); /* 원호 단면의 기울기 */
+          var k = Math.min(3.2, slope) * 0.34;                  /* 굴절률 환산 */
+          dx = gx * k; dy = gy * k;
+        }
+
+        d[i]     = Math.max(0, Math.min(255, 128 + dx * 127));
+        d[i + 1] = Math.max(0, Math.min(255, 128 + dy * 127));
+        d[i + 2] = 0;
+        d[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return cv.toDataURL();
+  }
+
+  /* 한 채널만 남기는 색행렬 */
+  function keep(ch) {
+    var m = { r: '1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0',
+              g: '0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0',
+              b: '0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0' };
+    return m[ch];
+  }
+
+  function buildFilter(w, h, r, edge, scale) {
+    var id = 'lgx' + (++seq);
+    var f = document.createElementNS(NS, 'filter');
+    f.setAttribute('id', id);
+    f.setAttribute('x', '0');
+    f.setAttribute('y', '0');
+    f.setAttribute('width', '100%');
+    f.setAttribute('height', '100%');
+    f.setAttribute('primitiveUnits', 'objectBoundingBox');
+    f.setAttribute('color-interpolation-filters', 'sRGB');
+
+    /* R·G·B 를 서로 다른 세기로 굴절 → 가장자리 색분산.
+       두꺼운 유리 테두리에 무지개가 도는 그 현상입니다. */
+    var s = scale;
+    f.innerHTML =
+      '<feImage href="' + mapURI(w, h, r, edge) + '" x="0" y="0" width="1" height="1"' +
+        ' preserveAspectRatio="none" result="m"/>' +
+
+      '<feDisplacementMap in="SourceGraphic" in2="m" scale="' + (s * 1.10).toFixed(4) +
+        '" xChannelSelector="R" yChannelSelector="G" result="dr"/>' +
+      '<feColorMatrix in="dr" type="matrix" values="' + keep('r') + '" result="cr"/>' +
+
+      '<feDisplacementMap in="SourceGraphic" in2="m" scale="' + s.toFixed(4) +
+        '" xChannelSelector="R" yChannelSelector="G" result="dg"/>' +
+      '<feColorMatrix in="dg" type="matrix" values="' + keep('g') + '" result="cg"/>' +
+
+      '<feDisplacementMap in="SourceGraphic" in2="m" scale="' + (s * 0.90).toFixed(4) +
+        '" xChannelSelector="R" yChannelSelector="G" result="db"/>' +
+      '<feColorMatrix in="db" type="matrix" values="' + keep('b') + '" result="cb"/>' +
+
+      '<feComposite in="cr" in2="cg" operator="arithmetic" k2="1" k3="1" result="crg"/>' +
+      '<feComposite in="crg" in2="cb" operator="arithmetic" k2="1" k3="1" result="rgb"/>' +
+
+      /* 굴절된 가장자리를 아주 살짝 녹여 유리의 두께감을 만듭니다 */
+      '<feGaussianBlur in="rgb" stdDeviation="0.002"/>';
+
+    host().appendChild(f);
+    return id;
+  }
+
+  function radiusOf(el) {
+    var r = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+    return Math.round(r);
+  }
+
+  function apply(el) {
+    var rect = el.getBoundingClientRect();
+    var w = Math.round(rect.width);
+    var h = Math.round(rect.height);
+    if (w < 24 || h < 12) return;
+
+    var r = Math.min(radiusOf(el), Math.min(w, h) / 2);
+
+    /* 가장자리 렌즈 폭 — 모서리가 둥글수록 두껍게, 요소가 작으면 비율로 */
+    var edge = Math.max(10, Math.min(r * 1.15 || 14, Math.min(w, h) * 0.34));
+
+    /* primitiveUnits=objectBoundingBox 이므로 scale 은 요소 크기 대비 비율.
+       세로로 얇은 바는 조금 약하게, 알약처럼 둥근 것은 강하게. */
+    var base = 0.055 + 0.10 * Math.min(1, r / 28);
+    var scale = base * (parseFloat(getComputedStyle(document.documentElement)
+                  .getPropertyValue('--refract')) || 1);
+
+    var key = w + 'x' + h + 'r' + r + 's' + scale.toFixed(3);
+    var id = cache[key] || (cache[key] = buildFilter(w, h, r, edge, scale));
+
+    el.style.setProperty('--lg-filter', 'url(#' + id + ')');
+    el.classList.add('is-refracted');
+  }
+
+  function run() {
+    var els = document.querySelectorAll('.topbar, .dock, .popover, .spy, .spy__tab, .sidebar, .pager, .field.glass, .mega__panel, .dropdown, .searchpop__panel');
+
+    var ro = ('ResizeObserver' in window) ? new ResizeObserver(function (entries) {
+      entries.forEach(function (e) { apply(e.target); });
+    }) : null;
+
+    Array.prototype.forEach.call(els, function (el) {
+      apply(el);
+      if (ro) ro.observe(el);
+    });
+
+    /* 투명도 슬라이더를 움직이면 유리 두께도 함께 바뀝니다 */
+    var slider = document.getElementById('clarity');
+    if (slider) {
+      var t = null;
+      slider.addEventListener('input', function () {
+        clearTimeout(t);
+        t = setTimeout(function () {
+          cache = Object.create(null);
+          if (defs) defs.textContent = '';
+          Array.prototype.forEach.call(els, apply);
+        }, 140);
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})();
+</script>
+
+<!-- ── 글 제목을 목록 ↔ 본문으로 이어 주는 View Transition 이름 ───────────── -->
+<script>
+(function () {
+  if (!document.startViewTransition) return;
+
+  /* 목록에서 카드를 누르면, 그 카드의 제목이 다음 화면의 큰 제목으로
+     이어지도록 같은 이름을 붙여 둡니다. (iOS 의 push 전환과 같은 감각) */
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest && e.target.closest('.post');
+    if (!card) return;
+    document.querySelectorAll('[style*="view-transition-name"]').forEach(function (el) {
+      el.style.viewTransitionName = '';
+    });
+    card.style.viewTransitionName = 'lg-hero';
+  }, true);
+
+  /* 본문에 도착하면 히어로가 그 자리를 이어받습니다 */
+  var hero = document.querySelector('#permalink .hero, #notice .hero, #page .hero');
+  if (hero) hero.style.viewTransitionName = 'lg-hero';
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LIQUID — 모프 & 융합
+
+     ① 모프  : 팝오버가 '새로 나타나지' 않고, 누른 버튼이 늘어나서 팝오버가 됩니다.
+               시작 프레임 = 버튼의 실제 사각형. 모서리 반경까지 보간합니다.
+     ② 융합  : 도크와 팝오버 사이에 물방울 목이 생겼다가 끊어집니다.
+               goo 필터(블러 → 알파 대비 증폭)를 실루엣 층에만 겁니다.
+     ③ 관성  : 스크롤이 멈출 때 고정 UI 가 아주 살짝 뒤따라옵니다.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* iOS 스프링 — CSS 토큰과 같은 곡선을 WAAPI 에서도 씁니다 */
+  var SPRING = 'linear(0, 0.1208, 0.3514, 0.5765, 0.7525, 0.8726, 0.9459, 0.9857,' +
+               ' 1.0042, 1.0105, 1.0107, 1.0086, 1.006, 1.0037, 1.002, 1.001,' +
+               ' 1.0004, 1, 0.9999, 0.9999, 0.9999, 0.9999, 0.9999, 1, 1)';
+  var SNAP = 'linear(0, 0.1141, 0.3199, 0.5154, 0.67, 0.7822, 0.8594, 0.9107,' +
+             ' 0.9441, 0.9653, 0.9787, 0.987, 0.9921, 0.9952, 0.9971, 0.9983,' +
+             ' 0.999, 0.9994, 0.9996, 0.9998, 0.9999, 0.9999, 1, 1, 1)';
+
+  /* ── goo 필터 ────────────────────────────────────────────────────────
+     블러로 형태를 뭉갠 뒤, 알파 채널의 대비를 극단적으로 올립니다.
+     그러면 가까운 두 덩어리의 흐릿한 가장자리가 하나로 이어집니다.
+     metaball 을 필터 두 개로 흉내내는 고전적인 방법입니다.          */
+  function installGoo() {
+    if (document.getElementById('lgGoo')) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;width:0;height:0';
+    svg.innerHTML =
+      '<filter id="lgGoo" color-interpolation-filters="sRGB">' +
+        '<feGaussianBlur stdDeviation="9" result="b"/>' +
+        '<feColorMatrix in="b" type="matrix" ' +
+          'values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -11" result="g"/>' +
+        '<feComposite in="SourceGraphic" in2="g" operator="atop"/>' +
+      '</filter>';
+    document.body.appendChild(svg);
+  }
+
+  /* ── 실루엣 층 ─────────────────────────────────────────────────────── */
+  function makeLayer() {
+    var layer = document.createElement('div');
+    layer.className = 'liquid';
+    layer.id = 'liquid';
+    layer.innerHTML =
+      '<div class="liquid__blob" id="liquid-dock"></div>' +
+      '<div class="liquid__neck" id="liquid-neck"></div>' +
+      '<div class="liquid__blob" id="liquid-pop"></div>';
+    document.body.appendChild(layer);
+    return layer;
+  }
+
+  function place(el, rect, radius) {
+    el.style.left = rect.left + 'px';
+    el.style.top = rect.top + 'px';
+    el.style.width = rect.width + 'px';
+    el.style.height = rect.height + 'px';
+    if (radius != null) el.style.borderRadius = radius + 'px';
+  }
+
+  function radiusOf(el) {
+    return parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+  }
+
+  function boot() {
+    var dock = $('#dock');
+    var pop = $('#appearance');
+    var btn = $('#appearance-btn');
+    if (!dock || !pop || !btn) return;
+
+    /* 팝오버 내용에 래퍼를 씌워 따로 페이드시킵니다 */
+    var body = document.createElement('div');
+    body.className = 'popover__body';
+    while (pop.firstChild) body.appendChild(pop.firstChild);
+    pop.appendChild(body);
+
+    installGoo();
+    var layer = makeLayer();
+    var bDock = $('#liquid-dock'), bPop = $('#liquid-pop'), neck = $('#liquid-neck');
+
+    var open = false;
+    var anims = [];
+
+    function stop() { anims.forEach(function (a) { try { a.cancel(); } catch (e) {} }); anims = []; }
+
+    function syncSilhouette() {
+      place(bDock, dock.getBoundingClientRect(), radiusOf(dock));
+      place(bPop, pop.getBoundingClientRect(), radiusOf(pop));
+    }
+
+    /* 목 — 도크 윗변과 팝오버 아랫변을 잇는 좁은 기둥 */
+    function syncNeck(t) {
+      var d = dock.getBoundingClientRect();
+      var p = pop.getBoundingClientRect();
+      var cx = d.left + d.width - 22;
+      var gap = Math.max(0, d.top - p.bottom);
+      var w = 30 - 22 * t;                 /* 늘어날수록 가늘어집니다 */
+      neck.style.left = (cx - w / 2) + 'px';
+      neck.style.top = p.bottom + 'px';
+      neck.style.width = w + 'px';
+      neck.style.height = (gap + 4) + 'px';
+      neck.style.opacity = t < 0.72 ? '' : '0';   /* 끊어짐 */
+    }
+
+    function setOpen(on) {
+      if (on === open) return;
+      open = on;
+      stop();
+
+      pop.hidden = false;
+      dock.classList.toggle('is-holding', on);
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-expanded', String(on));
+
+      if (reduce) {
+        pop.classList.toggle('is-open', on);
+        return;
+      }
+
+      pop.classList.add('is-open');
+      pop.classList.add('is-morphing');
+
+      /* 버튼 사각형 → 팝오버 사각형. 실제 좌표로 계산합니다. */
+      var b = btn.getBoundingClientRect();
+      var p = pop.getBoundingClientRect();
+      var sx = b.width / p.width;
+      var sy = b.height / p.height;
+      var dx = (b.left + b.width / 2) - (p.left + p.width / 2);
+      var dy = (b.top + b.height / 2) - (p.top + p.height / 2);
+
+      var from = {
+        transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')',
+        borderRadius: '999px',
+        opacity: 0.2
+      };
+      var to = { transform: 'none', borderRadius: '22px', opacity: 1 };
+
+      anims.push(pop.animate(on ? [from, to] : [to, from], {
+        duration: on ? 520 : 340,
+        easing: on ? SPRING : SNAP,
+        fill: 'both'
+      }));
+
+      anims.push(body.animate(
+        on ? [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }]
+           : [{ opacity: 1 }, { opacity: 0 }],
+        { duration: on ? 260 : 140, delay: on ? 160 : 0, easing: 'ease-out', fill: 'both' }
+      ));
+
+      /* 실루엣 융합 — 목이 늘어나며 끊어집니다 */
+      layer.classList.add('is-active');
+      var t0 = performance.now();
+      var DUR = on ? 480 : 300;
+
+      (function tick(now) {
+        var t = Math.min(1, (now - t0) / DUR);
+        var k = on ? t : 1 - t;
+        syncSilhouette();
+        syncNeck(k);
+        if (t < 1) requestAnimationFrame(tick);
+        else {
+          layer.classList.remove('is-active');
+          if (!on) {
+            pop.classList.remove('is-open');
+            pop.hidden = true;
+          }
+          pop.classList.remove('is-morphing');
+        }
+      })(t0);
+    }
+
+    /* 기존 컨트롤러의 클릭 핸들러를 대체합니다 */
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!open);
+    }, true);
+
+    document.addEventListener('click', function (e) {
+      if (open && !pop.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && open) setOpen(false);
+    });
+
+    addEventListener('resize', function () { if (open) syncSilhouette(); });
+  }
+
+  /* 관성 반동은 걷어냈습니다.
+     스크롤 속도를 --lg-inertia 에 넣어 상단바와 도크를 밀던 코드였는데,
+     휠·트랙패드처럼 이산적인 입력에서는 매 칸마다 튀고 감쇠하기를
+     반복해 물결처럼 보였습니다. 자세한 이유는 CSS §22-4 참고. */
+
+  function start() { boot(); }
+
+  /* 안전망 — 부팅이 어디선가 걸려도 로더는 반드시 사라집니다.
+     본체는 컨트롤러 스크립트에 있고(window.LUCID.hideLoader), 그 스크립트가
+     통째로 죽은 경우까지 대비해 요소를 직접 빼는 길도 남깁니다. */
+  function hideLoader() {
+    var f = window.LUCID && window.LUCID.hideLoader;
+    if (f) { f(); return; }
+    var l = document.getElementById('boot');
+    if (l) l.remove();
+  }
+  addEventListener('load', hideLoader);
+  setTimeout(hideLoader, 3000);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+
+</body>
+</html>
